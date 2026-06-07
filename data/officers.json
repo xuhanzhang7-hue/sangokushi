@@ -1,0 +1,519 @@
+{
+  "officers": [
+    {
+      "id": 1, "name": "曹操", "style": "孟德",
+      "birth": 155, "death": 220,
+      "stats": {"tong": 96, "wu": 72, "zhi": 91, "zheng": 94, "mei": 98},
+      "skills": ["shenjiang", "nengli"],
+      "xiangxing": 50, "yeli": 95, "yili": 30,
+      "gender": "male",
+      "relations": [
+        {"target": 4, "type": "family"},
+        {"target": 5, "type": "family"},
+        {"target": 3, "type": "family"},
+        {"target": 7, "type": "love"},
+        {"target": 38, "type": "love"}
+      ]
+    },
+    {
+      "id": 2, "name": "刘备", "style": "玄德",
+      "birth": 161, "death": 223,
+      "stats": {"tong": 78, "wu": 73, "zhi": 74, "zheng": 82, "mei": 99},
+      "skills": ["renzheng"],
+      "xiangxing": 120, "yeli": 60, "yili": 95,
+      "gender": "male",
+      "relations": [
+        {"target": 21, "type": "brother"},
+        {"target": 22, "type": "brother"},
+        {"target": 23, "type": "love"},
+        {"target": 11, "type": "love"}
+      ]
+    },
+    {
+      "id": 3, "name": "夏侯惇", "style": "元让",
+      "birth": 157, "death": 220,
+      "stats": {"tong": 88, "wu": 90, "zhi": 60, "zheng": 72, "mei": 78},
+      "skills": ["qishen"],
+      "xiangxing": 48, "yeli": 30, "yili": 85,
+      "gender": "male",
+      "relations": [
+        {"target": 4, "type": "family"},
+        {"target": 1, "type": "family"}
+      ]
+    },
+    {
+      "id": 4, "name": "夏侯渊", "style": "妙才",
+      "birth": 162, "death": 219,
+      "stats": {"tong": 90, "wu": 91, "zhi": 62, "zheng": 62, "mei": 75},
+      "skills": ["qishen", "jizou"],
+      "xiangxing": 48, "yeli": 35, "yili": 80,
+      "gender": "male",
+      "relations": [
+        {"target": 3, "type": "family"},
+        {"target": 1, "type": "family"}
+      ]
+    },
+    {
+      "id": 5, "name": "曹仁", "style": "子孝",
+      "birth": 168, "death": 223,
+      "stats": {"tong": 88, "wu": 86, "zhi": 65, "zheng": 55, "mei": 72},
+      "skills": ["shoucheng", "zhucheng"],
+      "xiangxing": 52, "yeli": 25, "yili": 82,
+      "gender": "male",
+      "relations": [
+        {"target": 1, "type": "family"}
+      ]
+    },
+    {
+      "id": 6, "name": "曹洪", "style": "子廉",
+      "birth": 169, "death": 232,
+      "stats": {"tong": 74, "wu": 81, "zhi": 48, "zheng": 42, "mei": 56},
+      "skills": [],
+      "xiangxing": 52, "yeli": 30, "yili": 70,
+      "gender": "male",
+      "relations": [
+        {"target": 1, "type": "family"}
+      ]
+    },
+    {
+      "id": 7, "name": "许褚", "style": "仲康",
+      "birth": 170, "death": 225,
+      "stats": {"tong": 70, "wu": 97, "zhi": 36, "zheng": 25, "mei": 58},
+      "skills": ["yongjiang"],
+      "xiangxing": 50, "yeli": 10, "yili": 90,
+      "gender": "male",
+      "relations": [
+        {"target": 8, "type": "love"}
+      ]
+    },
+    {
+      "id": 8, "name": "典韦", "style": "子满",
+      "birth": 160, "death": 197,
+      "stats": {"tong": 65, "wu": 96, "zhi": 35, "zheng": 28, "mei": 56},
+      "skills": ["yongjiang"],
+      "xiangxing": 50, "yeli": 8, "yili": 95,
+      "gender": "male",
+      "relations": [
+        {"target": 7, "type": "love"},
+        {"target": 1, "type": "love"}
+      ]
+    },
+    {
+      "id": 9, "name": "张辽", "style": "文远",
+      "birth": 169, "death": 222,
+      "stats": {"tong": 93, "wu": 92, "zhi": 78, "zheng": 60, "mei": 80},
+      "skills": ["yongjiang", "qiangxing"],
+      "xiangxing": 55, "yeli": 25, "yili": 85,
+      "gender": "male",
+      "relations": [
+        {"target": 1, "type": "love"}
+      ]
+    },
+    {
+      "id": 10, "name": "徐晃", "style": "公明",
+      "birth": 169, "death": 227,
+      "stats": {"tong": 88, "wu": 91, "zhi": 72, "zheng": 52, "mei": 72},
+      "skills": ["doushen"],
+      "xiangxing": 55, "yeli": 20, "yili": 80,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 11, "name": "张郃", "style": "儁乂",
+      "birth": 167, "death": 231,
+      "stats": {"tong": 90, "wu": 89, "zhi": 68, "zheng": 56, "mei": 70},
+      "skills": ["doushen"],
+      "xiangxing": 55, "yeli": 30, "yili": 72,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 12, "name": "于禁", "style": "文则",
+      "birth": 168, "death": 221,
+      "stats": {"tong": 84, "wu": 78, "zhi": 55, "zheng": 50, "mei": 58},
+      "skills": ["gongcheng"],
+      "xiangxing": 52, "yeli": 40, "yili": 55,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 13, "name": "乐进", "style": "文谦",
+      "birth": 165, "death": 218,
+      "stats": {"tong": 80, "wu": 88, "zhi": 52, "zheng": 42, "mei": 56},
+      "skills": ["gongcheng"],
+      "xiangxing": 52, "yeli": 20, "yili": 75,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 14, "name": "李典", "style": "曼成",
+      "birth": 174, "death": 209,
+      "stats": {"tong": 78, "wu": 75, "zhi": 82, "zheng": 70, "mei": 72},
+      "skills": ["tuntian"],
+      "xiangxing": 55, "yeli": 15, "yili": 78,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 15, "name": "荀彧", "style": "文若",
+      "birth": 163, "death": 212,
+      "stats": {"tong": 45, "wu": 15, "zhi": 95, "zheng": 98, "mei": 93},
+      "skills": ["nengli", "faming"],
+      "xiangxing": 55, "yeli": 25, "yili": 80,
+      "gender": "male",
+      "relations": [
+        {"target": 1, "type": "love"},
+        {"target": 17, "type": "love"}
+      ]
+    },
+    {
+      "id": 16, "name": "荀攸", "style": "公达",
+      "birth": 157, "death": 214,
+      "stats": {"tong": 40, "wu": 12, "zhi": 96, "zheng": 88, "mei": 82},
+      "skills": ["shensuan", "baichu"],
+      "xiangxing": 55, "yeli": 20, "yili": 78,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 17, "name": "贾诩", "style": "文和",
+      "birth": 147, "death": 223,
+      "stats": {"tong": 58, "wu": 48, "zhi": 97, "zheng": 86, "mei": 62},
+      "skills": ["shensuan", "lianhuan"],
+      "xiangxing": 48, "yeli": 40, "yili": 35,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 18, "name": "程昱", "style": "仲德",
+      "birth": 141, "death": 220,
+      "stats": {"tong": 70, "wu": 52, "zhi": 90, "zheng": 82, "mei": 56},
+      "skills": ["lianhuan"],
+      "xiangxing": 55, "yeli": 15, "yili": 72,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 19, "name": "郭嘉", "style": "奉孝",
+      "birth": 170, "death": 207,
+      "stats": {"tong": 50, "wu": 15, "zhi": 97, "zheng": 82, "mei": 85},
+      "skills": ["shensuan", "guimou"],
+      "xiangxing": 55, "yeli": 20, "yili": 65,
+      "gender": "male",
+      "relations": [
+        {"target": 1, "type": "love"}
+      ]
+    },
+    {
+      "id": 20, "name": "司马懿", "style": "仲达",
+      "birth": 179, "death": 251,
+      "stats": {"tong": 94, "wu": 63, "zhi": 97, "zheng": 92, "mei": 88},
+      "skills": ["shensuan", "dongcha", "faming"],
+      "xiangxing": 45, "yeli": 98, "yili": 15,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 21, "name": "关羽", "style": "云长",
+      "birth": 162, "death": 219,
+      "stats": {"tong": 95, "wu": 97, "zhi": 76, "zheng": 63, "mei": 93},
+      "skills": ["shenjiang", "gongcheng"],
+      "xiangxing": 120, "yeli": 30, "yili": 98,
+      "gender": "male",
+      "relations": [
+        {"target": 2, "type": "brother"},
+        {"target": 22, "type": "brother"},
+        {"target": 24, "type": "love"}
+      ]
+    },
+    {
+      "id": 22, "name": "张飞", "style": "翼德",
+      "birth": 167, "death": 221,
+      "stats": {"tong": 85, "wu": 98, "zhi": 38, "zheng": 28, "mei": 45},
+      "skills": ["doushen"],
+      "xiangxing": 120, "yeli": 25, "yili": 95,
+      "gender": "male",
+      "relations": [
+        {"target": 2, "type": "brother"},
+        {"target": 21, "type": "brother"}
+      ]
+    },
+    {
+      "id": 23, "name": "诸葛亮", "style": "孔明",
+      "birth": 181, "death": 234,
+      "stats": {"tong": 92, "wu": 38, "zhi": 100, "zheng": 97, "mei": 95},
+      "skills": ["shensuan", "lianhuan", "faming"],
+      "xiangxing": 120, "yeli": 10, "yili": 98,
+      "gender": "male",
+      "relations": [
+        {"target": 2, "type": "love"},
+        {"target": 28, "type": "love"},
+        {"target": 50, "type": "spouse"}
+      ]
+    },
+    {
+      "id": 24, "name": "赵云", "style": "子龙",
+      "birth": 168, "death": 229,
+      "stats": {"tong": 88, "wu": 96, "zhi": 76, "zheng": 65, "mei": 92},
+      "skills": ["feijiang", "dongcha"],
+      "xiangxing": 120, "yeli": 10, "yili": 95,
+      "gender": "male",
+      "relations": [
+        {"target": 2, "type": "love"},
+        {"target": 21, "type": "love"}
+      ]
+    },
+    {
+      "id": 25, "name": "马超", "style": "孟起",
+      "birth": 176, "death": 222,
+      "stats": {"tong": 88, "wu": 97, "zhi": 48, "zheng": 35, "mei": 84},
+      "skills": ["qishen", "qiangxing"],
+      "xiangxing": 90, "yeli": 45, "yili": 72,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 26, "name": "黄忠", "style": "汉升",
+      "birth": 148, "death": 220,
+      "stats": {"tong": 86, "wu": 95, "zhi": 62, "zheng": 48, "mei": 72},
+      "skills": ["gongshen"],
+      "xiangxing": 115, "yeli": 10, "yili": 85,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 27, "name": "魏延", "style": "文长",
+      "birth": 174, "death": 234,
+      "stats": {"tong": 82, "wu": 92, "zhi": 55, "zheng": 38, "mei": 48},
+      "skills": ["yongjiang"],
+      "xiangxing": 110, "yeli": 80, "yili": 40,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 28, "name": "徐庶", "style": "元直",
+      "birth": 173, "death": 230,
+      "stats": {"tong": 72, "wu": 65, "zhi": 93, "zheng": 78, "mei": 80},
+      "skills": ["shensuan"],
+      "xiangxing": 118, "yeli": 20, "yili": 85,
+      "gender": "male",
+      "relations": [
+        {"target": 23, "type": "love"}
+      ]
+    },
+    {
+      "id": 29, "name": "糜竺", "style": "子仲",
+      "birth": 165, "death": 221,
+      "stats": {"tong": 28, "wu": 32, "zhi": 70, "zheng": 82, "mei": 76},
+      "skills": ["fuhao"],
+      "xiangxing": 120, "yeli": 10, "yili": 88,
+      "gender": "male",
+      "relations": [
+        {"target": 2, "type": "love"}
+      ]
+    },
+    {
+      "id": 30, "name": "孙乾", "style": "公祐",
+      "birth": 165, "death": 215,
+      "stats": {"tong": 32, "wu": 28, "zhi": 72, "zheng": 80, "mei": 78},
+      "skills": ["lunke"],
+      "xiangxing": 120, "yeli": 8, "yili": 82,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 31, "name": "简雍", "style": "宪和",
+      "birth": 164, "death": 225,
+      "stats": {"tong": 30, "wu": 35, "zhi": 68, "zheng": 75, "mei": 82},
+      "skills": ["lunke", "qingguo"],
+      "xiangxing": 120, "yeli": 5, "yili": 75,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 32, "name": "满宠", "style": "伯宁",
+      "birth": 170, "death": 242,
+      "stats": {"tong": 78, "wu": 62, "zhi": 80, "zheng": 82, "mei": 72},
+      "skills": ["fazhi", "zhucheng"],
+      "xiangxing": 52, "yeli": 15, "yili": 78,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 33, "name": "孙权", "style": "仲谋",
+      "birth": 182, "death": 252,
+      "stats": {"tong": 72, "wu": 68, "zhi": 80, "zheng": 85, "mei": 92},
+      "skills": ["renzheng"],
+      "xiangxing": 200, "yeli": 55, "yili": 72,
+      "gender": "male",
+      "relations": [
+        {"target": 34, "type": "love"},
+        {"target": 35, "type": "love"}
+      ]
+    },
+    {
+      "id": 34, "name": "周瑜", "style": "公瑾",
+      "birth": 175, "death": 210,
+      "stats": {"tong": 96, "wu": 72, "zhi": 96, "zheng": 86, "mei": 94},
+      "skills": ["shuishen", "huogong"],
+      "xiangxing": 200, "yeli": 20, "yili": 88,
+      "gender": "male",
+      "relations": [
+        {"target": 33, "type": "love"},
+        {"target": 35, "type": "love"}
+      ]
+    },
+    {
+      "id": 35, "name": "鲁肃", "style": "子敬",
+      "birth": 172, "death": 217,
+      "stats": {"tong": 62, "wu": 55, "zhi": 90, "zheng": 92, "mei": 88},
+      "skills": ["fuhao", "lunke"],
+      "xiangxing": 200, "yeli": 15, "yili": 90,
+      "gender": "male",
+      "relations": [
+        {"target": 34, "type": "love"}
+      ]
+    },
+    {
+      "id": 36, "name": "吕蒙", "style": "子明",
+      "birth": 178, "death": 219,
+      "stats": {"tong": 90, "wu": 82, "zhi": 88, "zheng": 72, "mei": 78},
+      "skills": ["gongcheng", "yongjiang"],
+      "xiangxing": 200, "yeli": 35, "yili": 78,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 37, "name": "陆逊", "style": "伯言",
+      "birth": 183, "death": 245,
+      "stats": {"tong": 95, "wu": 68, "zhi": 95, "zheng": 86, "mei": 88},
+      "skills": ["huogong", "lianhuan"],
+      "xiangxing": 200, "yeli": 25, "yili": 80,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 38, "name": "甘宁", "style": "兴霸",
+      "birth": 175, "death": 220,
+      "stats": {"tong": 86, "wu": 94, "zhi": 62, "zheng": 35, "mei": 65},
+      "skills": ["shuishen"],
+      "xiangxing": 200, "yeli": 35, "yili": 65,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 39, "name": "太史慈", "style": "子义",
+      "birth": 166, "death": 206,
+      "stats": {"tong": 82, "wu": 93, "zhi": 58, "zheng": 48, "mei": 80},
+      "skills": ["gongshen"],
+      "xiangxing": 198, "yeli": 20, "yili": 88,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 40, "name": "黄盖", "style": "公覆",
+      "birth": 155, "death": 218,
+      "stats": {"tong": 78, "wu": 85, "zhi": 72, "zheng": 55, "mei": 72},
+      "skills": ["huogong"],
+      "xiangxing": 200, "yeli": 15, "yili": 82,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 41, "name": "程普", "style": "德谋",
+      "birth": 155, "death": 215,
+      "stats": {"tong": 82, "wu": 80, "zhi": 68, "zheng": 58, "mei": 75},
+      "skills": ["shoucheng"],
+      "xiangxing": 200, "yeli": 12, "yili": 85,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 42, "name": "周泰", "style": "幼平",
+      "birth": 175, "death": 225,
+      "stats": {"tong": 78, "wu": 90, "zhi": 45, "zheng": 38, "mei": 68},
+      "skills": ["tengjia"],
+      "xiangxing": 200, "yeli": 10, "yili": 92,
+      "gender": "male",
+      "relations": [
+        {"target": 33, "type": "love"}
+      ]
+    },
+    {
+      "id": 43, "name": "张昭", "style": "子布",
+      "birth": 156, "death": 236,
+      "stats": {"tong": 25, "wu": 8, "zhi": 84, "zheng": 96, "mei": 78},
+      "skills": ["nengli", "fazhi"],
+      "xiangxing": 200, "yeli": 20, "yili": 75,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 44, "name": "刘璋", "style": "季玉",
+      "birth": 162, "death": 219,
+      "stats": {"tong": 18, "wu": 15, "zhi": 28, "zheng": 30, "mei": 65},
+      "skills": [],
+      "xiangxing": 130, "yeli": 20, "yili": 50,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 45, "name": "张鲁", "style": "公祺",
+      "birth": 160, "death": 216,
+      "stats": {"tong": 48, "wu": 38, "zhi": 60, "zheng": 65, "mei": 82},
+      "skills": ["midao"],
+      "xiangxing": 100, "yeli": 30, "yili": 60,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 46, "name": "马腾", "style": "寿成",
+      "birth": 155, "death": 212,
+      "stats": {"tong": 82, "wu": 84, "zhi": 52, "zheng": 48, "mei": 72},
+      "skills": ["qishen"],
+      "xiangxing": 90, "yeli": 40, "yili": 70,
+      "gender": "male",
+      "relations": [
+        {"target": 25, "type": "family"}
+      ]
+    },
+    {
+      "id": 47, "name": "韩遂", "style": "文约",
+      "birth": 145, "death": 215,
+      "stats": {"tong": 80, "wu": 76, "zhi": 72, "zheng": 62, "mei": 68},
+      "skills": [],
+      "xiangxing": 85, "yeli": 50, "yili": 40,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 48, "name": "刘表", "style": "景升",
+      "birth": 142, "death": 208,
+      "stats": {"tong": 55, "wu": 42, "zhi": 65, "zheng": 75, "mei": 82},
+      "skills": ["renzheng"],
+      "xiangxing": 140, "yeli": 30, "yili": 65,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 49, "name": "蔡瑁", "style": "德珪",
+      "birth": 155, "death": 208,
+      "stats": {"tong": 72, "wu": 68, "zhi": 52, "zheng": 48, "mei": 42},
+      "skills": ["shuishen"],
+      "xiangxing": 135, "yeli": 45, "yili": 30,
+      "gender": "male",
+      "relations": []
+    },
+    {
+      "id": 50, "name": "黄月英", "style": "",
+      "birth": 185, "death": 235,
+      "stats": {"tong": 30, "wu": 20, "zhi": 88, "zheng": 75, "mei": 65},
+      "skills": ["faming", "nengli"],
+      "xiangxing": 120, "yeli": 5, "yili": 90,
+      "gender": "female",
+      "relations": [
+        {"target": 23, "type": "spouse"}
+      ]
+    }
+  ]
+}

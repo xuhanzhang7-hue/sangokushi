@@ -1,0 +1,34 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="三国新生"
+config/description="三国志11地图 × 信野新生内政 — 全AI辅助编程"
+config/version="0.1.0"
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.6")
+
+[autoload]
+
+GameManager="*res://scripts/autoload/GameManager.gd"
+DataManager="*res://scripts/autoload/DataManager.gd"
+TurnManager="*res://scripts/autoload/TurnManager.gd"
+EventBus="*res://scripts/autoload/EventBus.gd"
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/stretch/mode="canvas_items"
+
+[rendering]
+
+environment/default_clear_color=Color(0.06, 0.2, 0.4, 1)

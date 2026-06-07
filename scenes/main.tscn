@@ -1,0 +1,99 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" uid="uid://cck61h8jl18hd" path="res://scripts/MainStartup.gd" id="1"]
+[ext_resource type="Script" uid="uid://cexbd7yxai0fv" path="res://scripts/map/MapRenderer.gd" id="2"]
+[ext_resource type="Script" uid="uid://d3y5dujaomfry" path="res://scripts/map/MapInput.gd" id="3"]
+[ext_resource type="Script" uid="uid://b632or4neise3" path="res://scripts/ui/HUDController.gd" id="4"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1")
+
+[node name="Map" type="Node2D" parent="."]
+script = ExtResource("2")
+
+[node name="Camera2D" type="Camera2D" parent="Map"]
+position = Vector2(800, -3000)
+enabled = true
+
+[node name="TerrainLayer" type="Node2D" parent="Map"]
+[node name="OverlayLayer" type="Node2D" parent="Map"]
+[node name="FeatureLayer" type="Node2D" parent="Map"]
+[node name="UnitLayer" type="Node2D" parent="Map"]
+[node name="UILayer" type="Node2D" parent="Map"]
+
+[node name="MapInput" type="Node" parent="."]
+script = ExtResource("3")
+map_renderer = NodePath("../Map")
+
+[node name="UI" type="CanvasLayer" parent="."]
+script = ExtResource("4")
+
+[node name="TopBar" type="Panel" parent="UI"]
+anchors_preset = 15
+offset_bottom = 48
+
+[node name="TopBarContainer" type="HBoxContainer" parent="UI/TopBar"]
+anchors_preset = 15
+alignment = 1
+
+[node name="GoldLabel" type="Label" parent="UI/TopBar/TopBarContainer"]
+text = "金: 0"
+[node name="FoodLabel" type="Label" parent="UI/TopBar/TopBarContainer"]
+text = "粮: 0"
+[node name="TurnLabel" type="Label" parent="UI/TopBar/TopBarContainer"]
+text = "回合: 1"
+[node name="FactionLabel" type="Label" parent="UI/TopBar/TopBarContainer"]
+text = ""
+
+[node name="SidePanel" type="Panel" parent="UI"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1520.0
+offset_right = 1920.0
+offset_top = 48.0
+offset_bottom = 1080.0
+
+[node name="SidePanelTitle" type="Label" parent="UI/SidePanel"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 392.0
+offset_bottom = 36.0
+text = ""
+
+[node name="SidePanelContent" type="VBoxContainer" parent="UI/SidePanel"]
+offset_left = 8.0
+offset_top = 40.0
+offset_right = 392.0
+offset_bottom = 1032.0
+
+[node name="CommandBar" type="Panel" parent="UI"]
+anchors_preset = 15
+offset_top = 1028.0
+
+[node name="CommandContainer" type="HBoxContainer" parent="UI/CommandBar"]
+anchors_preset = 15
+alignment = 1
+
+[node name="BtnEndTurn" type="Button" parent="UI/CommandBar/CommandContainer"]
+text = "进行 (结束回合)"
+custom_minimum_size = Vector2(180, 40)
+
+[node name="BtnInternal" type="Button" parent="UI/CommandBar/CommandContainer"]
+text = "内政"
+custom_minimum_size = Vector2(100, 40)
+
+[node name="BtnMilitary" type="Button" parent="UI/CommandBar/CommandContainer"]
+text = "军事"
+custom_minimum_size = Vector2(100, 40)
+
+[node name="BtnTalent" type="Button" parent="UI/CommandBar/CommandContainer"]
+text = "人才"
+custom_minimum_size = Vector2(100, 40)
+
+[node name="BtnDiplomacy" type="Button" parent="UI/CommandBar/CommandContainer"]
+text = "外交"
+custom_minimum_size = Vector2(100, 40)
+
+[node name="BtnStrategy" type="Button" parent="UI/CommandBar/CommandContainer"]
+text = "谋略"
+custom_minimum_size = Vector2(100, 40)

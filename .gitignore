@@ -1,0 +1,23 @@
+# Godot
+.godot/
+*.import
+*.translation
+export/
+
+# IDE
+.vs/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Claude
+.claude/
+
+# Build
+*.exe
+*.pck

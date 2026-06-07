@@ -1,0 +1,104 @@
+{
+  "tech_trees": {
+    "spear_tech": {
+      "name": "枪兵术",
+      "category": "military",
+      "levels": [
+        {"level": 1, "name": "枪兵入门", "cost": 1000, "turns": 6, "effect": "枪兵攻击+5%"},
+        {"level": 2, "name": "枪兵熟练", "cost": 2000, "turns": 9, "effect": "枪兵攻击+10%，解锁战法[螺旋突刺]"},
+        {"level": 3, "name": "枪兵精通", "cost": 4000, "turns": 12, "effect": "枪兵攻击+15%，解锁战法[二段突刺]"},
+        {"level": 4, "name": "枪兵极意", "cost": 8000, "turns": 18, "effect": "枪兵攻击+20%，枪兵防御+10%"}
+      ]
+    },
+    "cav_tech": {
+      "name": "骑兵术",
+      "category": "military",
+      "levels": [
+        {"level": 1, "name": "骑兵入门", "cost": 1200, "turns": 6, "effect": "骑兵攻击+5%"},
+        {"level": 2, "name": "骑兵熟练", "cost": 2400, "turns": 9, "effect": "骑兵攻击+10%，移动+1，解锁战法[突击]"},
+        {"level": 3, "name": "骑兵精通", "cost": 5000, "turns": 12, "effect": "骑兵攻击+15%，解锁战法[疾风突进]"},
+        {"level": 4, "name": "骑兵极意", "cost": 10000, "turns": 18, "effect": "骑兵攻击+20%，骑兵移动+1，解锁[虎豹骑]"}
+      ]
+    },
+    "bow_tech": {
+      "name": "弩兵术",
+      "category": "military",
+      "levels": [
+        {"level": 1, "name": "弩兵入门", "cost": 1000, "turns": 6, "effect": "弩兵攻击+5%"},
+        {"level": 2, "name": "弩兵熟练", "cost": 2000, "turns": 9, "effect": "弩兵射程+1，解锁战法[贯射]"},
+        {"level": 3, "name": "弩兵精通", "cost": 4000, "turns": 12, "effect": "弩兵暴击率+10%，解锁战法[乱射]"},
+        {"level": 4, "name": "弩兵极意", "cost": 8000, "turns": 18, "effect": "弩兵射程+1，暴击率+20%，解锁[元戎弩]"}
+      ]
+    },
+    "navy_tech": {
+      "name": "水军术",
+      "category": "military",
+      "levels": [
+        {"level": 1, "name": "水军入门", "cost": 1000, "turns": 6, "effect": "水上移动+1"},
+        {"level": 2, "name": "水军熟练", "cost": 2000, "turns": 9, "effect": "水上攻击+10%，解锁战法[撞击]"},
+        {"level": 3, "name": "水军精通", "cost": 4000, "turns": 12, "effect": "水上防御+15%，解锁战法[猛火船]"},
+        {"level": 4, "name": "水军极意", "cost": 8000, "turns": 18, "effect": "水上移动+1，水上全属性+15%"}
+      ]
+    },
+    "siege_tech": {
+      "name": "攻城术",
+      "category": "military",
+      "levels": [
+        {"level": 1, "name": "攻城入门", "cost": 1500, "turns": 8, "effect": "对城伤害+20%，解锁[冲车]"},
+        {"level": 2, "name": "攻城熟练", "cost": 3000, "turns": 12, "effect": "对城伤害+30%，解锁[井阑]"},
+        {"level": 3, "name": "攻城精通", "cost": 6000, "turns": 16, "effect": "对城伤害+40%，解锁[投石车]"},
+        {"level": 4, "name": "攻城极意", "cost": 12000, "turns": 24, "effect": "对城伤害+50%，解锁[木兽]"}
+      ]
+    },
+    "defense_tech": {
+      "name": "防卫术",
+      "category": "military",
+      "levels": [
+        {"level": 1, "name": "防卫入门", "cost": 1000, "turns": 6, "effect": "城耐久+500，箭楼威力+20%"},
+        {"level": 2, "name": "防卫熟练", "cost": 2000, "turns": 9, "effect": "城耐久+500，守城伤害+20%"},
+        {"level": 3, "name": "防卫精通", "cost": 4000, "turns": 12, "effect": "城耐久+1000，箭楼射程+1"},
+        {"level": 4, "name": "防卫极意", "cost": 8000, "turns": 18, "effect": "城耐久+1000，守城伤害+40%"}
+      ]
+    },
+    "agriculture_tech": {
+      "name": "农政",
+      "category": "domestic",
+      "levels": [
+        {"level": 1, "name": "农政入门", "cost": 800, "turns": 5, "effect": "粮食产量+10%"},
+        {"level": 2, "name": "农政熟练", "cost": 1600, "turns": 8, "effect": "粮食产量+20%"},
+        {"level": 3, "name": "农政精通", "cost": 3200, "turns": 11, "effect": "粮食产量+30%，抗灾害+20%"},
+        {"level": 4, "name": "农政极意", "cost": 6400, "turns": 15, "effect": "粮食产量+40%，抗灾害+40%"}
+      ]
+    },
+    "commerce_tech": {
+      "name": "商政",
+      "category": "domestic",
+      "levels": [
+        {"level": 1, "name": "商政入门", "cost": 800, "turns": 5, "effect": "金钱收入+10%"},
+        {"level": 2, "name": "商政熟练", "cost": 1600, "turns": 8, "effect": "金钱收入+20%"},
+        {"level": 3, "name": "商政精通", "cost": 3200, "turns": 11, "effect": "金钱收入+30%"},
+        {"level": 4, "name": "商政极意", "cost": 6400, "turns": 15, "effect": "金钱收入+40%，市场收入额外+20%"}
+      ]
+    },
+    "recruitment_tech": {
+      "name": "民兵制",
+      "category": "domestic",
+      "levels": [
+        {"level": 1, "name": "民兵入门", "cost": 1000, "turns": 6, "effect": "征兵效率+10%"},
+        {"level": 2, "name": "民兵熟练", "cost": 2000, "turns": 9, "effect": "征兵效率+20%，预备兵上限+20%"},
+        {"level": 3, "name": "民兵精通", "cost": 4000, "turns": 12, "effect": "征兵效率+30%，预备兵上限+40%"},
+        {"level": 4, "name": "民兵极意", "cost": 8000, "turns": 18, "effect": "征兵效率+50%，预备兵上限+60%"}
+      ]
+    },
+    "invention_tech": {
+      "name": "发明",
+      "category": "domestic",
+      "levels": [
+        {"level": 1, "name": "发明入门", "cost": 1200, "turns": 8, "effect": "研究速度+20%"},
+        {"level": 2, "name": "发明熟练", "cost": 2400, "turns": 12, "effect": "研究速度+35%，解锁Lv2城下町设施"},
+        {"level": 3, "name": "发明精通", "cost": 5000, "turns": 16, "effect": "研究速度+50%，解锁Lv3城下町设施"},
+        {"level": 4, "name": "发明极意", "cost": 10000, "turns": 24, "effect": "研究速度+70%，城下町建设时间-50%"}
+      ]
+    }
+  }
+}

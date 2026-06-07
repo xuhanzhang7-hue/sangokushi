@@ -1,0 +1,230 @@
+{
+  "scenario": {
+    "id": "207_chibi",
+    "name": "赤壁之战",
+    "year": 207,
+    "start_turn": 1,
+    "description": "建安十二年（公元207年），曹操已统一北方，正磨刀霍霍准备南征。刘备寄居新野，三顾茅庐求得诸葛亮辅佐。孙权继承父兄基业，虎踞江东。一场决定天下格局的大战即将在赤壁拉开帷幕……",
+    "playable_factions": ["caocao", "liubei", "sunquan"],
+    "victory_condition": "统一全部城市 或 占领50%以上城市持续36回合"
+  },
+  "factions": [
+    {
+      "id": "caocao",
+      "name": "曹操",
+      "leader_id": 1,
+      "color": "#2255CC",
+      "cities": ["ye", "xuchang", "luoyang", "changan", "chenliu", "puyang", "pingyuan", "beihai", "xiapi", "shouchun", "xiangyang"],
+      "gold": 50000,
+      "food": 200000,
+      "tech_levels": {
+        "spear_tech": 2, "cav_tech": 2, "bow_tech": 2, "navy_tech": 1,
+        "siege_tech": 1, "defense_tech": 2,
+        "agriculture_tech": 2, "commerce_tech": 2, "recruitment_tech": 2, "invention_tech": 2
+      }
+    },
+    {
+      "id": "liubei",
+      "name": "刘备",
+      "leader_id": 2,
+      "color": "#22AA44",
+      "cities": [],
+      "base_city": "xinye",
+      "gold": 3000,
+      "food": 15000,
+      "tech_levels": {
+        "spear_tech": 1, "cav_tech": 1, "bow_tech": 1, "navy_tech": 1,
+        "siege_tech": 1, "defense_tech": 1,
+        "agriculture_tech": 1, "commerce_tech": 1, "recruitment_tech": 2, "invention_tech": 1
+      }
+    },
+    {
+      "id": "sunquan",
+      "name": "孙权",
+      "leader_id": 33,
+      "color": "#CC3333",
+      "cities": ["jianye", "wu"],
+      "gold": 30000,
+      "food": 120000,
+      "tech_levels": {
+        "spear_tech": 1, "cav_tech": 1, "bow_tech": 2, "navy_tech": 2,
+        "siege_tech": 1, "defense_tech": 2,
+        "agriculture_tech": 2, "commerce_tech": 2, "recruitment_tech": 2, "invention_tech": 1
+      }
+    },
+    {
+      "id": "liubiao",
+      "name": "刘表",
+      "leader_id": 48,
+      "color": "#AAAA44",
+      "cities": ["jiangling", "changsha"],
+      "gold": 15000,
+      "food": 80000,
+      "tech_levels": {
+        "spear_tech": 1, "cav_tech": 1, "bow_tech": 1, "navy_tech": 2,
+        "siege_tech": 1, "defense_tech": 1,
+        "agriculture_tech": 2, "commerce_tech": 1, "recruitment_tech": 1, "invention_tech": 1
+      }
+    },
+    {
+      "id": "liuzhang",
+      "name": "刘璋",
+      "leader_id": 44,
+      "color": "#88AA44",
+      "cities": ["chengdu"],
+      "gold": 20000,
+      "food": 100000,
+      "tech_levels": {
+        "spear_tech": 1, "cav_tech": 1, "bow_tech": 1, "navy_tech": 1,
+        "siege_tech": 1, "defense_tech": 1,
+        "agriculture_tech": 2, "commerce_tech": 1, "recruitment_tech": 1, "invention_tech": 1
+      }
+    },
+    {
+      "id": "zhanglu",
+      "name": "张鲁",
+      "leader_id": 45,
+      "color": "#CCAA44",
+      "cities": ["hanzhong"],
+      "gold": 8000,
+      "food": 40000,
+      "tech_levels": {
+        "spear_tech": 1, "cav_tech": 1, "bow_tech": 1, "navy_tech": 1,
+        "siege_tech": 1, "defense_tech": 1,
+        "agriculture_tech": 1, "commerce_tech": 1, "recruitment_tech": 1, "invention_tech": 1
+      }
+    },
+    {
+      "id": "mateng",
+      "name": "马腾",
+      "leader_id": 46,
+      "color": "#8844AA",
+      "cities": [],
+      "base_city": "tianshui",
+      "gold": 10000,
+      "food": 50000,
+      "tech_levels": {
+        "spear_tech": 1, "cav_tech": 2, "bow_tech": 1, "navy_tech": 1,
+        "siege_tech": 1, "defense_tech": 1,
+        "agriculture_tech": 1, "commerce_tech": 1, "recruitment_tech": 2, "invention_tech": 1
+      }
+    },
+    {
+      "id": "gongsun",
+      "name": "公孙康",
+      "leader_id": 0,
+      "color": "#666666",
+      "cities": ["xiangping", "beiping"],
+      "gold": 8000,
+      "food": 40000,
+      "tech_levels": {}
+    }
+  ],
+  "officer_assignments": {
+    "caocao": [
+      1, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 32
+    ],
+    "liubei": [2, 21, 22, 24, 28, 29, 30, 31],
+    "sunquan": [33, 34, 35, 36, 37, 38, 40, 41, 42, 43],
+    "liubiao": [48, 49],
+    "liuzhang": [44],
+    "zhanglu": [45],
+    "mateng": [46, 47, 25],
+    "gongsun": [],
+    "unaligned_in_the_wild": [8, 19, 23, 26, 27, 39, 50]
+  },
+  "officer_locations": {
+    "8": "chenliu",
+    "19": "xuchang",
+    "23": "xiangyang",
+    "26": "changsha",
+    "27": "xiangyang",
+    "39": "beihai",
+    "50": "xiangyang"
+  },
+  "initial_armies": {
+    "caocao": [
+      {"city": "xuchang", "commander": 1, "unit": "cavalry", "troops": 8000},
+      {"city": "xuchang", "commander": 3, "unit": "cavalry", "troops": 6000},
+      {"city": "xuchang", "commander": 9, "unit": "spear", "troops": 5000},
+      {"city": "chenliu", "commander": 5, "unit": "spear", "troops": 5000},
+      {"city": "luoyang", "commander": 10, "unit": "cavalry", "troops": 4000},
+      {"city": "ye", "commander": 4, "unit": "cavalry", "troops": 5000},
+      {"city": "xiangyang", "commander": 12, "unit": "spear", "troops": 3000}
+    ],
+    "liubei": [
+      {"city": "xinye", "commander": 21, "unit": "spear", "troops": 3000},
+      {"city": "xinye", "commander": 22, "unit": "spear", "troops": 2500},
+      {"city": "xinye", "commander": 24, "unit": "cavalry", "troops": 2000}
+    ],
+    "sunquan": [
+      {"city": "jianye", "commander": 33, "unit": "spear", "troops": 5000},
+      {"city": "jianye", "commander": 34, "unit": "navy", "troops": 7000},
+      {"city": "wu", "commander": 38, "unit": "navy", "troops": 5000}
+    ],
+    "liubiao": [
+      {"city": "jiangling", "commander": 49, "unit": "navy", "troops": 5000},
+      {"city": "changsha", "commander": 48, "unit": "spear", "troops": 3000}
+    ],
+    "liuzhang": [
+      {"city": "chengdu", "commander": 44, "unit": "spear", "troops": 4000}
+    ],
+    "zhanglu": [
+      {"city": "hanzhong", "commander": 45, "unit": "spear", "troops": 3000}
+    ],
+    "mateng": [
+      {"city": "tianshui", "commander": 25, "unit": "cavalry", "troops": 5000},
+      {"city": "tianshui", "commander": 46, "unit": "cavalry", "troops": 4000}
+    ]
+  },
+  "events": [
+    {
+      "id": "sangu_maolu",
+      "name": "三顾茅庐",
+      "trigger_turn": [1, 15],
+      "condition": "faction:liubei AND officer_in_wild:23",
+      "effect": "officer:23 joins liubei",
+      "narrative": "刘备三次拜访隆中草庐，终于得见卧龙诸葛亮。诸葛亮献上《隆中对》，分析天下大势，愿随刘备出山匡扶汉室。"
+    },
+    {
+      "id": "caocao_south",
+      "name": "曹操南征",
+      "trigger_turn": [18, 24],
+      "condition": "faction:caocao has_city:xiangyang",
+      "effect": "liubiao faction collapses, jiangling joins caocao",
+      "narrative": "建安十三年秋，曹操率大军南下。刘表病逝，其子刘琮举荆州投降曹操。"
+    },
+    {
+      "id": "changban",
+      "name": "长坂坡之战",
+      "trigger_turn": [18, 24],
+      "condition": "faction:caocao has_city:xiangyang AND faction:liubei alive",
+      "effect": "liubei retreats, zhaoyun gains fame",
+      "narrative": "曹操轻骑追击刘备于当阳长坂。赵云在乱军中七进七出，救出阿斗。张飞据水断桥，瞋目横矛，曹军无人敢近。"
+    },
+    {
+      "id": "sunjian_alliance",
+      "name": "孙刘同盟",
+      "trigger_turn": [20, 30],
+      "condition": "faction:liubei alive AND faction:sunquan alive AND faction:caocao has_city:xiangyang",
+      "effect": "alliance between liubei and sunquan for 24 turns",
+      "narrative": "曹操大军压境，诸葛亮出使江东，智激周瑜，舌战群儒，促成孙刘同盟。周公瑾挂帅，准备在赤壁迎击曹操。"
+    },
+    {
+      "id": "chibi_fire",
+      "name": "赤壁之战",
+      "trigger_turn": [24, 36],
+      "condition": "alliance:liubei-sunquan AND faction:caocao has_army_near:chibi",
+      "effect": "massive fire damage to caocao's navy, morale collapse",
+      "narrative": "东风起，黄盖诈降，火船冲向曹军水寨。顷刻间火光冲天，曹军战舰化为灰烬。周瑜挥军掩杀，曹操大败，率残军北逃。"
+    },
+    {
+      "id": "huarong",
+      "name": "华容道",
+      "trigger_turn": [24, 36],
+      "condition": "event:chibi_fire triggered",
+      "effect": "Guan Yu encounters Cao Cao; choice: capture or release",
+      "narrative": "曹操败走华容道，正遇关羽所部。关羽念及旧日恩情，犹豫不决……"
+    }
+  ]
+}
