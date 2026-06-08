@@ -755,8 +755,7 @@ func _select_army_from_list(army_id: int) -> void:
 	# Center camera on army using grid_to_screen
 	var renderer = get_node_or_null("../Map")
 	if renderer and renderer.camera and renderer.grid_utils:
-		var height = DataManager.get_height_at(army.position.x, army.position.y)
-		var world_pos = renderer.grid_utils.grid_to_screen(army.position.x, army.position.y, height)
+		var world_pos = renderer.grid_utils.grid_to_screen(army.position.x, army.position.y)
 		renderer.camera.position = world_pos
 
 	_update_side_panel_army(army_id)

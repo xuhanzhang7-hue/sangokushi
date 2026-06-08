@@ -3,64 +3,112 @@
     {
       "id": "hulao_guan",
       "name": "虎牢关",
-      "position": {"x": 95, "y": 62},
-      "connects": ["luoyang", "chenliu"],
+      "position": {
+        "x": 114,
+        "y": 62
+      },
+      "connects": [
+        "luoyang",
+        "chenliu"
+      ],
       "max_durability": 2000,
       "defense_bonus": 40
     },
     {
       "id": "hangu_guan",
       "name": "函谷关",
-      "position": {"x": 68, "y": 61},
-      "connects": ["changan", "luoyang"],
+      "position": {
+        "x": 82,
+        "y": 60
+      },
+      "connects": [
+        "changan",
+        "luoyang"
+      ],
       "max_durability": 2500,
       "defense_bonus": 45
     },
     {
       "id": "wu_guan",
       "name": "武关",
-      "position": {"x": 62, "y": 72},
-      "connects": ["changan", "xiangyang"],
+      "position": {
+        "x": 74,
+        "y": 72
+      },
+      "connects": [
+        "changan",
+        "xiangyang"
+      ],
       "max_durability": 1800,
       "defense_bonus": 35
     },
     {
       "id": "jian_ge",
       "name": "剑阁",
-      "position": {"x": 25, "y": 82},
-      "connects": ["hanzhong", "chengdu"],
+      "position": {
+        "x": 30,
+        "y": 82
+      },
+      "connects": [
+        "hanzhong",
+        "chengdu"
+      ],
       "max_durability": 2200,
       "defense_bonus": 45
     },
     {
       "id": "yangping_guan",
       "name": "阳平关",
-      "position": {"x": 44, "y": 73},
-      "connects": ["changan", "hanzhong"],
+      "position": {
+        "x": 52,
+        "y": 72
+      },
+      "connects": [
+        "changan",
+        "hanzhong"
+      ],
       "max_durability": 2000,
       "defense_bonus": 40
     },
     {
       "id": "jiameng_guan",
       "name": "葭萌关",
-      "position": {"x": 32, "y": 84},
-      "connects": ["hanzhong", "chengdu"],
+      "position": {
+        "x": 38,
+        "y": 84
+      },
+      "connects": [
+        "hanzhong",
+        "chengdu"
+      ],
       "max_durability": 1800,
       "defense_bonus": 35
     },
     {
       "id": "hu_guan",
       "name": "壶关",
-      "position": {"x": 85, "y": 34},
-      "connects": ["jinyang", "ye"],
+      "position": {
+        "x": 102,
+        "y": 34
+      },
+      "connects": [
+        "jinyang",
+        "ye"
+      ],
       "max_durability": 1800,
       "defense_bonus": 35
     },
     {
       "id": "sishui_guan",
       "name": "汜水关",
-      "position": {"x": 92, "y": 68},
-      "connects": ["luoyang", "xuchang"],
+      "position": {
+        "x": 110,
+        "y": 68
+      },
+      "connects": [
+        "luoyang",
+        "xuchang"
+      ],
       "max_durability": 1800,
       "defense_bonus": 35
     }

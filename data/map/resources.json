@@ -1,25 +1,172 @@
 {
   "resources": [
-    {"type": "farmland", "position": {"x": 100, "y": 43}, "city_id": "ye"},
-    {"type": "farmland", "position": {"x": 97, "y": 46}, "city_id": "ye"},
-    {"type": "farmland", "position": {"x": 88, "y": 68}, "city_id": "luoyang"},
-    {"type": "farmland", "position": {"x": 97, "y": 78}, "city_id": "xuchang"},
-    {"type": "farmland", "position": {"x": 118, "y": 55}, "city_id": "pingyuan"},
-    {"type": "farmland", "position": {"x": 126, "y": 75}, "city_id": "xiapi"},
-    {"type": "farmland", "position": {"x": 130, "y": 103}, "city_id": "jianye"},
-    {"type": "farmland", "position": {"x": 20, "y": 93}, "city_id": "chengdu"},
-    {"type": "farmland", "position": {"x": 84, "y": 92}, "city_id": "xiangyang"},
-    {"type": "farmland", "position": {"x": 70, "y": 102}, "city_id": "jiangling"},
-    {"type": "farmland", "position": {"x": 108, "y": 90}, "city_id": "shouchun"},
-    {"type": "mine", "position": {"x": 68, "y": 38}, "city_id": "jinyang"},
-    {"type": "mine", "position": {"x": 48, "y": 55}, "city_id": "changan"},
-    {"type": "mine", "position": {"x": 37, "y": 80}, "city_id": "hanzhong"},
-    {"type": "mine", "position": {"x": 19, "y": 85}, "city_id": "chengdu"},
-    {"type": "mine", "position": {"x": 86, "y": 86}, "city_id": "xiangyang"},
-    {"type": "village", "position": {"x": 102, "y": 72}, "city_id": "chenliu"},
-    {"type": "village", "position": {"x": 120, "y": 72}, "city_id": "xiapi"},
-    {"type": "village", "position": {"x": 92, "y": 90}, "city_id": "xiangyang"},
-    {"type": "village", "position": {"x": 30, "y": 88}, "city_id": "chengdu"},
-    {"type": "village", "position": {"x": 140, "y": 100}, "city_id": "jianye"}
+    {
+      "type": "farmland",
+      "position": {
+        "x": 120,
+        "y": 44
+      },
+      "city_id": "ye"
+    },
+    {
+      "type": "farmland",
+      "position": {
+        "x": 116,
+        "y": 46
+      },
+      "city_id": "ye"
+    },
+    {
+      "type": "farmland",
+      "position": {
+        "x": 106,
+        "y": 68
+      },
+      "city_id": "luoyang"
+    },
+    {
+      "type": "farmland",
+      "position": {
+        "x": 116,
+        "y": 78
+      },
+      "city_id": "xuchang"
+    },
+    {
+      "type": "farmland",
+      "position": {
+        "x": 142,
+        "y": 56
+      },
+      "city_id": "pingyuan"
+    },
+    {
+      "type": "farmland",
+      "position": {
+        "x": 152,
+        "y": 76
+      },
+      "city_id": "xiapi"
+    },
+    {
+      "type": "farmland",
+      "position": {
+        "x": 156,
+        "y": 104
+      },
+      "city_id": "jianye"
+    },
+    {
+      "type": "farmland",
+      "position": {
+        "x": 24,
+        "y": 92
+      },
+      "city_id": "chengdu"
+    },
+    {
+      "type": "farmland",
+      "position": {
+        "x": 100,
+        "y": 92
+      },
+      "city_id": "xiangyang"
+    },
+    {
+      "type": "farmland",
+      "position": {
+        "x": 84,
+        "y": 102
+      },
+      "city_id": "jiangling"
+    },
+    {
+      "type": "farmland",
+      "position": {
+        "x": 130,
+        "y": 90
+      },
+      "city_id": "shouchun"
+    },
+    {
+      "type": "mine",
+      "position": {
+        "x": 82,
+        "y": 38
+      },
+      "city_id": "jinyang"
+    },
+    {
+      "type": "mine",
+      "position": {
+        "x": 58,
+        "y": 56
+      },
+      "city_id": "changan"
+    },
+    {
+      "type": "mine",
+      "position": {
+        "x": 44,
+        "y": 80
+      },
+      "city_id": "hanzhong"
+    },
+    {
+      "type": "mine",
+      "position": {
+        "x": 22,
+        "y": 84
+      },
+      "city_id": "chengdu"
+    },
+    {
+      "type": "mine",
+      "position": {
+        "x": 104,
+        "y": 86
+      },
+      "city_id": "xiangyang"
+    },
+    {
+      "type": "village",
+      "position": {
+        "x": 122,
+        "y": 72
+      },
+      "city_id": "chenliu"
+    },
+    {
+      "type": "village",
+      "position": {
+        "x": 144,
+        "y": 72
+      },
+      "city_id": "xiapi"
+    },
+    {
+      "type": "village",
+      "position": {
+        "x": 110,
+        "y": 90
+      },
+      "city_id": "xiangyang"
+    },
+    {
+      "type": "village",
+      "position": {
+        "x": 36,
+        "y": 88
+      },
+      "city_id": "chengdu"
+    },
+    {
+      "type": "village",
+      "position": {
+        "x": 168,
+        "y": 100
+      },
+      "city_id": "jianye"
+    }
   ]
 }

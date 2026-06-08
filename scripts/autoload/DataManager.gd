@@ -1,5 +1,6 @@
 extends Node
 ## 数据管理器单例 — 负责所有 JSON 数据的加载、缓存和查询
+## 支持 Offset Square tile 网格地形
 
 # 原始数据缓存
 var _officers_raw: Array = []
@@ -9,19 +10,16 @@ var _units_raw: Dictionary = {}
 var _techs_raw: Dictionary = {}
 var _events_raw: Array = []
 
-# 地图数据
-var _terrain_data: Dictionary = {}
-var _rivers_data: Array = []
+# Tile 地形数据（2D 网格）
+var _terrain_grid: Array = []      # Array[Array[String]] — 按 [gy][gx] 索引
+var _height_grid: Array = []       # Array[Array[int]] — 同形
+var map_width: int = 240
+var map_height: int = 360
+
+# 地图要素：关隘、港口
 var _passes_data: Array = []
 var _harbors_data: Array = []
-var _roads_data: Array = []
 var _resources_data: Array = []
-
-# 展开后的顶点数据（从terrain regions展开）
-var _vertex_terrain: Dictionary = {}   # {Vector2i → terrain_type}
-var _vertex_height: Dictionary = {}     # {Vector2i → height}
-var _vertex_features: Dictionary = {}    # {Vector2i → feature_data}
-var _county_vertices: Dictionary = {}    # {county_id → Array[Vector2i]}
 
 # 快速索引
 var officers_by_id: Dictionary = {}
@@ -29,10 +27,6 @@ var cities_by_id: Dictionary = {}
 var counties_by_id: Dictionary = {}
 var passes_by_id: Dictionary = {}
 var harbors_by_id: Dictionary = {}
-
-# 地图尺寸
-var map_width: int = 200
-var map_height: int = 180
 
 
 func _ready() -> void:
@@ -76,7 +70,6 @@ func _load_cities() -> void:
 			_cities_raw = json["cities"]
 			for c in _cities_raw:
 				cities_by_id[c["id"]] = c
-				# 索引郡
 				if "counties" in c:
 					for county in c["counties"]:
 						county["city_id"] = c["id"]
@@ -114,7 +107,6 @@ func _load_techs() -> void:
 
 
 func _load_events() -> void:
-	# 事件数据嵌在剧本文件中，此方法保留用于未来独立事件文件
 	if not FileAccess.file_exists("res://data/events.json"):
 		print("DataManager: No standalone events.json, events loaded from scenarios")
 		return
@@ -126,14 +118,15 @@ func _load_events() -> void:
 			_events_raw = json.get("events", [])
 
 
+## ============================================================
+## 地图数据加载（tile 网格）
+## ============================================================
+
 func _load_map_data() -> void:
 	_load_terrain()
-	_load_rivers()
 	_load_passes()
 	_load_harbors()
-	_load_roads()
 	_load_resources()
-	_expand_terrain_regions()
 
 
 func _load_terrain() -> void:
@@ -142,19 +135,24 @@ func _load_terrain() -> void:
 		var json = JSON.parse_string(file.get_as_text())
 		file.close()
 		if json:
-			_terrain_data = json
-			map_width = json.get("width", 200)
-			map_height = json.get("height", 180)
-			print("DataManager: Loaded terrain data (%dx%d)" % [map_width, map_height])
+			map_width = json.get("width", 120)
+			map_height = json.get("height", 90)
+			_terrain_grid = json.get("grid", [])
+			_height_grid = json.get("heights", [])
+			print("DataManager: Loaded terrain grid (%dx%d)" % [map_width, map_height])
+			# Validate
+			if _terrain_grid.size() != map_height:
+				push_error("DataManager: terrain grid row count mismatch! expected %d got %d" % [map_height, _terrain_grid.size()])
+			return
 
-
-func _load_rivers() -> void:
-	var file = FileAccess.open("res://data/map/rivers.json", FileAccess.READ)
-	if file:
-		var json = JSON.parse_string(file.get_as_text())
-		file.close()
-		if json:
-			_rivers_data = json.get("rivers", [])
+	# Fallback: all plains
+	push_error("DataManager: Failed to load terrain.json, using default plains grid")
+	_terrain_grid = []
+	for gy in range(map_height):
+		var row: Array = []
+		for _gx in range(map_width):
+			row.append("plain")
+		_terrain_grid.append(row)
 
 
 func _load_passes() -> void:
@@ -179,15 +177,6 @@ func _load_harbors() -> void:
 				harbors_by_id[h["id"]] = h
 
 
-func _load_roads() -> void:
-	var file = FileAccess.open("res://data/map/roads.json", FileAccess.READ)
-	if file:
-		var json = JSON.parse_string(file.get_as_text())
-		file.close()
-		if json:
-			_roads_data = json.get("roads", [])
-
-
 func _load_resources() -> void:
 	var file = FileAccess.open("res://data/map/resources.json", FileAccess.READ)
 	if file:
@@ -197,116 +186,71 @@ func _load_resources() -> void:
 			_resources_data = json.get("resources", [])
 
 
-func _compare_region_order(a: Dictionary, b: Dictionary) -> bool:
-	return a.get("order", 0) < b.get("order", 0)
-
-
 ## ============================================================
-## 地形展开 — 将区域定义展开为逐顶点数据
+## Tile 地形查询
 ## ============================================================
 
-func _expand_terrain_regions() -> void:
-	_vertex_terrain.clear()
-	_vertex_height.clear()
-
-	var default_terrain = _terrain_data.get("default_terrain", "plain")
-	var default_height = _terrain_data.get("default_height", 0)
-	var regions = _terrain_data.get("regions", [])
-
-	# 按order排序（确保后定义的区域覆盖先定义的）
-	regions.sort_custom(_compare_region_order)
-
-	for region in regions:
-		var rect = region.get("rect", {})
-		var rx = rect.get("x", 0)
-		var ry = rect.get("y", 0)
-		var rw = rect.get("w", 10)
-		var rh = rect.get("h", 10)
-		var rtype = region.get("type", default_terrain)
-		var rheight = region.get("height", default_height)
-
-		for x in range(rx, rx + rw):
-			for y in range(ry, ry + rh):
-				if x >= 0 and x < map_width and y >= 0 and y < map_height:
-					var key = "%d,%d" % [x, y]
-					_vertex_terrain[key] = rtype
-					_vertex_height[key] = rheight
-
-	# 应用河流顶点
-	for river in _rivers_data:
-		var path = river.get("path", [])
-		for point in path:
-			var x = point[0]
-			var y = point[1]
-			if x >= 0 and x < map_width and y >= 0 and y < map_height:
-				var key = "%d,%d" % [x, y]
-				_vertex_terrain[key] = "water"
-
-	# 应用道路顶点
-	for road in _roads_data:
-		var path = road.get("path", [])
-		for point in path:
-			var x = point[0]
-			var y = point[1]
-			if x >= 0 and x < map_width and y >= 0 and y < map_height:
-				var key = "%d,%d" % [x, y]
-				var existing = _vertex_terrain.get(key, "")
-				if existing == "plain":
-					_vertex_terrain[key] = "road"
-
-	# 应用overrides
-	var overrides = _terrain_data.get("overrides", [])
-	for ov in overrides:
-		var x = ov.get("x", 0)
-		var y = ov.get("y", 0)
-		if x >= 0 and x < map_width and y >= 0 and y < map_height:
-			var key = "%d,%d" % [x, y]
-			_vertex_terrain[key] = ov.get("terrain", default_terrain)
-			_vertex_height[key] = ov.get("height", default_height)
-
-	print("DataManager: Expanded terrain for %d vertices" % _vertex_terrain.size())
+## 获取 tile 地形类型
+func get_terrain_at(gx: int, gy: int) -> String:
+	if gy >= 0 and gy < _terrain_grid.size():
+		var row = _terrain_grid[gy]
+		if gx >= 0 and gx < row.size():
+			return row[gx]
+	return "plain"
 
 
-## ============================================================
-## 查询方法
-## ============================================================
-
-## 获取顶点地形类型
-func get_terrain_at(x: int, y: int) -> String:
-	var key = "%d,%d" % [x, y]
-	return _vertex_terrain.get(key, "plain")
-
-
-## 获取顶点高度
-func get_height_at(x: int, y: int) -> int:
-	var key = "%d,%d" % [x, y]
-	return _vertex_height.get(key, 0)
+## 获取 tile 高度
+func get_height_at(gx: int, gy: int) -> int:
+	if gy >= 0 and gy < _height_grid.size():
+		var row = _height_grid[gy]
+		if gx >= 0 and gx < row.size():
+			return row[gx]
+	return 0
 
 
-## 判断顶点是否可通过
-func is_passable(x: int, y: int) -> bool:
-	var terrain = get_terrain_at(x, y)
-	return terrain not in ["water", "ocean", "high_mountain"]
+## 判断 tile 是否可通过（陆军）
+func is_passable(gx: int, gy: int) -> bool:
+	var terrain = get_terrain_at(gx, gy)
+	return terrain not in ["water", "ocean"]
 
 
 ## 获取地形移动消耗
-func get_terrain_move_cost(x: int, y: int) -> int:
-	var terrain = get_terrain_at(x, y)
+func get_terrain_move_cost(gx: int, gy: int) -> int:
+	var terrain = get_terrain_at(gx, gy)
 	match terrain:
 		"plain", "grassland": return 1
-		"road": return 0.5
+		"road", "guandao", "city": return 1
 		"forest", "hill", "wetland", "ford": return 2
 		"mountain", "dense_forest": return 3
 		"desert": return 2
+		"water", "ocean": return 99
 		_: return 1
 
 
-## 获取武将原始数据
+## ============================================================
+## 地图要素查询
+## ============================================================
+
+func get_all_passes() -> Array:
+	return _passes_data
+
+
+func get_all_harbors() -> Array:
+	return _harbors_data
+
+
+func get_all_resources() -> Array:
+	return _resources_data
+
+
+## ============================================================
+## 武将 / 技能 / 兵种 / 科技 查询
+## ============================================================
+
 func get_officer_data(officer_id: int) -> Dictionary:
 	return officers_by_id.get(officer_id, {})
 
 
-## 获取势力在野/未发现武将
 func get_unaligned_officers() -> Array:
 	var result: Array = []
 	for o in _officers_raw:
@@ -315,7 +259,6 @@ func get_unaligned_officers() -> Array:
 	return result
 
 
-## 获取技能定义
 func get_skill_definition(skill_id: String) -> Dictionary:
 	if "skills" in _skills_raw:
 		for s in _skills_raw["skills"]:
@@ -324,7 +267,6 @@ func get_skill_definition(skill_id: String) -> Dictionary:
 	return {}
 
 
-## 获取兵种定义
 func get_unit_definition(unit_id: String) -> Dictionary:
 	if "units" in _units_raw:
 		for u in _units_raw["units"]:
@@ -333,15 +275,12 @@ func get_unit_definition(unit_id: String) -> Dictionary:
 	return {}
 
 
-## 获取势力兵种列表
-func get_available_units(faction_id: String, city_id: String, county_ids: Array) -> Array:
+func get_available_units(_faction_id: String, _city_id: String, county_ids: Array) -> Array:
 	var units: Array = []
 	if "units" not in _units_raw:
 		return units
-
 	for u in _units_raw["units"]:
 		if u.get("water_only", false):
-			# 检查是否有港口或造船所
 			var has_shipyard = false
 			for cid in county_ids:
 				var county = counties_by_id.get(cid, {})
@@ -355,54 +294,110 @@ func get_available_units(faction_id: String, city_id: String, county_ids: Array)
 	return units
 
 
-## 获取所有城市数据
 func get_all_cities() -> Array:
 	return _cities_raw
 
 
-## 获取所有关隘数据
-func get_all_passes() -> Array:
-	return _passes_data
-
-
-## 获取所有港口数据
-func get_all_harbors() -> Array:
-	return _harbors_data
-
-
-## 获取所有河流数据
-func get_all_rivers() -> Array:
-	return _rivers_data
-
-
-## 获取所有道路数据
-func get_all_roads() -> Array:
-	return _roads_data
-
-
-## 获取所有资源点
-func get_all_resources() -> Array:
-	return _resources_data
-
-
-## 获取科技树定义
 func get_tech_tree(tech_id: String) -> Dictionary:
 	if "tech_trees" in _techs_raw:
 		return _techs_raw["tech_trees"].get(tech_id, {})
 	return {}
 
 
-## 获取全部科技树
 func get_all_tech_trees() -> Dictionary:
 	return _techs_raw.get("tech_trees", {})
 
 
-## 获取事件列表
 func get_all_events() -> Array:
 	return _events_raw
 
 
-## 加载剧本
+## ============================================================
+## 编辑器
+## ============================================================
+
+## 直接设置 tile 地形（编辑器用）
+func set_terrain_at(gx: int, gy: int, terrain: String) -> void:
+	if gy >= 0 and gy < _terrain_grid.size():
+		var row = _terrain_grid[gy]
+		if gx >= 0 and gx < row.size():
+			row[gx] = terrain
+
+
+## 添加城市到 cities.json（编辑器用）
+func add_city(city_id: String, name: String, gx: int, gy: int) -> void:
+	# Read current cities
+	var path = "res://data/cities.json"
+	var data: Dictionary
+	var file = FileAccess.open(path, FileAccess.READ)
+	if file:
+		var text = file.get_as_text()
+		file.close()
+		data = JSON.parse_string(text) if text else {}
+	else:
+		data = {"cities": []}
+
+	if "cities" not in data:
+		data["cities"] = []
+
+	# Check if city already exists
+	for c in data["cities"]:
+		if c.get("id") == city_id:
+			c["position"] = {"x": gx, "y": gy}
+			print("DataManager: Updated existing city %s position" % name)
+			_save_cities(data)
+			return
+
+	# Add new city
+	var new_city = {
+		"id": city_id,
+		"name": name,
+		"position": {"x": gx, "y": gy},
+		"max_durability": 2000,
+		"counties": [
+			{"id": city_id + "_01", "name": name, "center": {"x": gx, "y": gy}, "size": "medium"},
+			{"id": city_id + "_02", "name": name + "郊", "center": {"x": gx + 2, "y": gy}, "size": "small"},
+		]
+	}
+	data["cities"].append(new_city)
+	_save_cities(data)
+	# Also update runtime cache
+	cities_by_id[city_id] = new_city
+	for county in new_city["counties"]:
+		counties_by_id[county["id"]] = county
+	_cities_raw.append(new_city)
+	print("DataManager: Added city %s at (%d,%d)" % [name, gx, gy])
+
+
+func _save_cities(data: Dictionary) -> void:
+	var file = FileAccess.open("res://data/cities.json", FileAccess.WRITE)
+	if file:
+		file.store_string(JSON.stringify(data, "\t", false, true))
+		file.close()
+
+
+## 保存地形到 JSON
+func save_terrain() -> void:
+	var output = {
+		"width": map_width,
+		"height": map_height,
+		"default_terrain": "plain",
+		"grid": _terrain_grid.duplicate(true),
+		"heights": _height_grid.duplicate(true),
+	}
+	var file = FileAccess.open("res://data/map/terrain.json", FileAccess.WRITE)
+	if file:
+		file.store_string(JSON.stringify(output, "\t"))
+		file.close()
+		print("DataManager: Terrain saved to terrain.json")
+	else:
+		push_error("DataManager: Failed to save terrain.json")
+
+
+## ============================================================
+## 剧本
+## ============================================================
+
 func load_scenario(scenario_id: String) -> Dictionary:
 	var path = "res://data/scenarios/%s.json" % scenario_id
 	var file = FileAccess.open(path, FileAccess.READ)

@@ -1,33 +1,29 @@
 class_name GridUtils
 extends RefCounted
-## 菱形等距网格坐标转换工具
+## Offset Square（偏移方格）网格坐标转换工具
 ##
-## 网格坐标系：(x, y) 为整数顶点坐标
-## 屏幕坐标系：(sx, sy) 为像素坐标
+## 奇数行右移半格，每个 tile 有 6 个邻接 tile，行为等同六边形网格
 ##
-## 菱形网格视觉：
-##      (0,0)    (2,0)
-##         \    /
-##   (0,2)  (1,1)  (2,2)
-##         /    \
-##      (0,4)    (2,4)
+## 布局示例 (gx=列, gy=行):
+##   Row 0 (even): [0,0] [1,0] [2,0] [3,0]
+##   Row 1 (odd):    [0,1] [1,1] [2,1] [3,1]
+##   Row 2 (even): [0,2] [1,2] [2,2] [3,2]
 ##
-## 屏幕投影公式：
-##   sx = (x - y) * half_w + origin_x
-##   sy = (x + y) * half_h - height * height_step + origin_y
+## 屏幕投影 (俯视图):
+##   sx = gx * TILE_SIZE + (gy % 2) * TILE_SIZE * 0.5 + origin_x
+##   sy = gy * TILE_SIZE + origin_y
 
-# 图块尺寸（可变，支持缩放）
-var tile_half_w: float = 64.0   # 菱形半宽（像素）
-var tile_half_h: float = 32.0   # 菱形半高（像素）
-const HEIGHT_STEP: float = 8.0  # 每级高度偏移（像素）
+# Tile 尺寸
+const TILE_SIZE: float = 96.0
+const TILE_HALF: float = 48.0
 
 # 地图原点偏移（屏幕坐标）
 var origin_x: float = 0.0
 var origin_y: float = 0.0
 
 # 网格范围
-var grid_width: int = 200
-var grid_height: int = 180
+var grid_width: int = 240
+var grid_height: int = 360
 
 
 func setup(p_origin_x: float, p_origin_y: float, p_width: int, p_height: int) -> void:
@@ -37,96 +33,126 @@ func setup(p_origin_x: float, p_origin_y: float, p_width: int, p_height: int) ->
 	grid_height = p_height
 
 
+## ============================================================
+## 坐标转换
+## ============================================================
+
 ## 网格坐标 → 屏幕坐标
-func grid_to_screen(grid_x: int, grid_y: int, height: int = 0) -> Vector2:
-	var sx = (grid_x - grid_y) * tile_half_w + origin_x
-	var sy = (grid_x + grid_y) * tile_half_h - height * HEIGHT_STEP + origin_y
+func grid_to_screen(gx: int, gy: int) -> Vector2:
+	var sx = gx * TILE_SIZE + (gy & 1) * TILE_HALF + TILE_HALF + origin_x
+	var sy = gy * TILE_SIZE + TILE_HALF + origin_y
 	return Vector2(sx, sy)
 
 
-## 屏幕坐标 → 最近的网格顶点坐标（不考虑高程时的近似）
-func screen_to_grid(screen_x: float, screen_y: float) -> Vector2i:
-	var rel_x = screen_x - origin_x
-	var rel_y = screen_y - origin_y
-	# 逆向变换
-	var gx_f = rel_x / tile_half_w + rel_y / tile_half_h
-	var gy_f = rel_y / tile_half_h - rel_x / tile_half_w
-	# 取整得到最近的顶点
-	var gx = roundi(gx_f * 0.5)
-	var gy = roundi(gy_f * 0.5)
-	return Vector2i(gx, gy)
-
-
-## 更精确的屏幕→网格（考虑菱形形状）
+## 屏幕坐标 → 最近的 tile 坐标
 func screen_to_grid_precise(screen_x: float, screen_y: float) -> Vector2i:
-	var rel_x = screen_x - origin_x
-	var rel_y = screen_y - origin_y
-	var gx = rel_x / tile_half_w + rel_y / tile_half_h
-	var gy = rel_y / tile_half_h - rel_x / tile_half_w
-	# 四舍五入
-	var ix = roundi(gx * 0.5)
-	var iy = roundi(gy * 0.5)
+	var fx = screen_x - origin_x
+	var fy = screen_y - origin_y
 
-	# 验证并修正到最近的顶点
+	# 先估算行
+	var gy_est = roundi(fy / TILE_SIZE)
+	gy_est = clampi(gy_est, 0, grid_height - 1)
+
+	# 在估算行附近搜索最佳 tile
 	var best_dist = INF
-	var best_pos = Vector2i(ix, iy)
-	for dx in [-1, 0, 1]:
-		for dy in [-1, 0, 1]:
-			var cx = ix + dx
-			var cy = iy + dy
-			if cx < 0 or cy < 0 or cx >= grid_width or cy >= grid_height:
+	var best_pos = Vector2i(0, 0)
+	for dy in [-1, 0, 1]:
+		var gy = gy_est + dy
+		if gy < 0 or gy >= grid_height:
+			continue
+		var offset = (gy & 1) * TILE_HALF
+		var gx_est = roundi((fx - offset) / TILE_SIZE)
+		gx_est = clampi(gx_est, 0, grid_width - 1)
+		for dx in [-1, 0, 1]:
+			var gx = gx_est + dx
+			if gx < 0 or gx >= grid_width:
 				continue
-			var spos = grid_to_screen(cx, cy, 0)
+			var spos = grid_to_screen(gx, gy)
 			var dist = Vector2(screen_x, screen_y).distance_squared_to(spos)
 			if dist < best_dist:
 				best_dist = dist
-				best_pos = Vector2i(cx, cy)
+				best_pos = Vector2i(gx, gy)
 	return best_pos
 
 
-## 网格曼哈顿距离
+## ============================================================
+## 邻接
+## ============================================================
+
+## 获取 6 方向相邻 tile
+func get_adjacent(pos: Vector2i) -> Array[Vector2i]:
+	var gx = pos.x
+	var gy = pos.y
+	var result: Array[Vector2i] = []
+
+	# 左右邻接（所有行通用）
+	_add_if_in_bounds(gx - 1, gy, result)
+	_add_if_in_bounds(gx + 1, gy, result)
+
+	if gy & 1:
+		# 奇数行偏移表
+		_add_if_in_bounds(gx,     gy - 1, result)   # 左上
+		_add_if_in_bounds(gx + 1, gy - 1, result)   # 右上
+		_add_if_in_bounds(gx,     gy + 1, result)   # 左下
+		_add_if_in_bounds(gx + 1, gy + 1, result)   # 右下
+	else:
+		# 偶数行偏移表
+		_add_if_in_bounds(gx - 1, gy - 1, result)   # 左上
+		_add_if_in_bounds(gx,     gy - 1, result)   # 右上
+		_add_if_in_bounds(gx - 1, gy + 1, result)   # 左下
+		_add_if_in_bounds(gx,     gy + 1, result)   # 右下
+
+	return result
+
+
+func _add_if_in_bounds(gx: int, gy: int, out: Array[Vector2i]) -> void:
+	if gx >= 0 and gy >= 0 and gx < grid_width and gy < grid_height:
+		out.append(Vector2i(gx, gy))
+
+
+## 获取 6 方向邻接（含自身，用于范围查询）
+func get_adjacent_8(pos: Vector2i) -> Array[Vector2i]:
+	return get_adjacent(pos)
+
+
+## ============================================================
+## 距离
+## ============================================================
+
+## 偏移坐标 → 立方坐标
+func _offset_to_cube(gx: int, gy: int) -> Vector3i:
+	var cx = gx - (gy - (gy & 1)) / 2
+	var cz = gy
+	var cy = -cx - cz
+	return Vector3i(cx, cy, cz)
+
+
+## 六边形网格距离（基于立方坐标）
+func grid_distance(a: Vector2i, b: Vector2i) -> int:
+	var ca = _offset_to_cube(a.x, a.y)
+	var cb = _offset_to_cube(b.x, b.y)
+	return maxi(maxi(abs(ca.x - cb.x), abs(ca.y - cb.y)), abs(ca.z - cb.z))
+
+
+## 网格曼哈顿距离（简化版六边形距离）
 func grid_manhattan(a: Vector2i, b: Vector2i) -> int:
-	return absi(a.x - b.x) + absi(a.y - b.y)
+	return grid_distance(a, b)
 
 
-## 网格直线距离（欧几里得近似）
-func grid_distance(a: Vector2i, b: Vector2i) -> float:
-	var dx = float(a.x - b.x)
-	var dy = float(a.y - b.y)
-	return sqrt(dx * dx + dy * dy)
+## ============================================================
+## 边界
+## ============================================================
 
-
-## 获取相邻顶点（4方向）
-func get_adjacent(pos: Vector2i) -> Array:
-	var result: Array = []
-	for dir in [[-1, 0], [1, 0], [0, -1], [0, 1]]:
-		var nx = pos.x + dir[0]
-		var ny = pos.y + dir[1]
-		if nx >= 0 and ny >= 0 and nx < grid_width and ny < grid_height:
-			result.append(Vector2i(nx, ny))
-	return result
-
-
-## 获取相邻顶点（8方向，含对角）
-func get_adjacent_8(pos: Vector2i) -> Array:
-	var result: Array = []
-	for dx in [-1, 0, 1]:
-		for dy in [-1, 0, 1]:
-			if dx == 0 and dy == 0:
-				continue
-			var nx = pos.x + dx
-			var ny = pos.y + dy
-			if nx >= 0 and ny >= 0 and nx < grid_width and ny < grid_height:
-				result.append(Vector2i(nx, ny))
-	return result
-
-
-## 判断顶点是否在网格范围内
+## 判断 tile 是否在网格范围内
 func is_in_bounds(pos: Vector2i) -> bool:
 	return pos.x >= 0 and pos.y >= 0 and pos.x < grid_width and pos.y < grid_height
 
 
-## 获取移动范围内可达顶点（BFS，考虑移动力和地形消耗）
+## ============================================================
+## 移动范围 (BFS)
+## ============================================================
+
+## 获取移动范围内可达 tile（BFS，考虑移动力和地形消耗）
 func get_reachable_vertices(
 	start: Vector2i,
 	move_points: int,
@@ -134,8 +160,9 @@ func get_reachable_vertices(
 	blocked_vertices: Array = []
 ) -> Dictionary:
 	"""
-	返回 {Vector2i: remaining_move_points} 的可达顶点字典
-	terrain_costs: {terrain_type: move_cost}
+	返回 {Vector2i: remaining_move_points} 的可达 tile 字典
+	terrain_costs: {terrain_type: move_cost} 如 {"plain": 1, "forest": 2}
+	blocked_vertices: 障碍 tile 列表
 	"""
 	var visited: Dictionary = {}
 	var queue: Array = [{pos = start, remaining = move_points}]
@@ -157,8 +184,11 @@ func get_reachable_vertices(
 		for adj in get_adjacent(pos):
 			if adj in blocked_set:
 				continue
-			var terrain = "plain"  # 需要外部提供terrain数据
-			var cost = terrain_costs.get(terrain, 1)
+			# 获取地形消耗（外部注入，默认1）
+			var cost = 1
+			var terrain_key = str(adj)
+			if terrain_key in terrain_costs:
+				cost = terrain_costs[terrain_key]
 			var new_remaining = remaining - cost
 			if new_remaining >= 0:
 				queue.append({pos = adj, remaining = new_remaining})

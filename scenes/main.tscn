@@ -12,7 +12,7 @@ script = ExtResource("1")
 script = ExtResource("2")
 
 [node name="Camera2D" type="Camera2D" parent="Map"]
-position = Vector2(800, -3000)
+position = Vector2(960, 540)
 enabled = true
 
 [node name="TerrainLayer" type="Node2D" parent="Map"]

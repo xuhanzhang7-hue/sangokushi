@@ -1,31 +1,31 @@
 {
   "cities": [
     {
-      "id": "xiangping",
-      "name": "襄平",
+      "id": "jinyang",
+      "name": "晋阳",
       "position": {
-        "x": 155,
-        "y": 12
+        "x": 123,
+        "y": 59
       },
-      "max_durability": 1500,
+      "max_durability": 2200,
       "counties": [
         {
-          "id": "xiangping_01",
-          "name": "襄平北",
+          "id": "jinyang_01",
+          "name": "晋阳",
           "center": {
-            "x": 153,
-            "y": 9
+            "x": 123,
+            "y": 59
           },
-          "size": "small"
+          "size": "large"
         },
         {
-          "id": "xiangping_02",
-          "name": "襄平南",
+          "id": "jinyang_02",
+          "name": "晋阳郊",
           "center": {
-            "x": 157,
-            "y": 14
+            "x": 125,
+            "y": 59
           },
-          "size": "medium"
+          "size": "small"
         }
       ]
     },
@@ -33,701 +33,84 @@
       "id": "beiping",
       "name": "北平",
       "position": {
-        "x": 135,
-        "y": 22
+        "x": 150,
+        "y": 48
       },
-      "max_durability": 2000,
+      "max_durability": 2500,
       "counties": [
         {
           "id": "beiping_01",
           "name": "北平",
           "center": {
-            "x": 134,
-            "y": 20
+            "x": 150,
+            "y": 48
           },
-          "size": "medium"
+          "size": "large"
         },
         {
           "id": "beiping_02",
-          "name": "辽西",
+          "name": "北平郊",
           "center": {
-            "x": 140,
-            "y": 18
+            "x": 152,
+            "y": 48
           },
           "size": "small"
         }
       ]
     },
     {
-      "id": "jinyang",
-      "name": "晋阳",
+      "id": "shenyang",
+      "name": "沈阳",
       "position": {
-        "x": 72,
-        "y": 28
+        "x": 217,
+        "y": 21
       },
       "max_durability": 2000,
       "counties": [
         {
-          "id": "jinyang_01",
-          "name": "晋阳",
+          "id": "shenyang_01",
+          "name": "沈阳",
           "center": {
-            "x": 72,
-            "y": 27
+            "x": 217,
+            "y": 21
           },
-          "size": "medium"
+          "size": "large"
         },
         {
-          "id": "jinyang_02",
-          "name": "雁门",
+          "id": "shenyang_02",
+          "name": "沈阳郊",
           "center": {
-            "x": 68,
-            "y": 24
-          },
-          "size": "small"
-        },
-        {
-          "id": "jinyang_03",
-          "name": "上党",
-          "center": {
-            "x": 76,
-            "y": 32
+            "x": 219,
+            "y": 21
           },
           "size": "small"
         }
       ]
     },
     {
-      "id": "ye",
-      "name": "邺",
+      "id": "changchun",
+      "name": "长春",
       "position": {
-        "x": 100,
-        "y": 42
-      },
-      "max_durability": 2500,
-      "counties": [
-        {
-          "id": "ye_01",
-          "name": "邺城",
-          "center": {
-            "x": 100,
-            "y": 41
-          },
-          "size": "large",
-          "special_resource": "iron_mine"
-        },
-        {
-          "id": "ye_02",
-          "name": "魏郡",
-          "center": {
-            "x": 98,
-            "y": 44
-          },
-          "size": "medium"
-        },
-        {
-          "id": "ye_03",
-          "name": "清河",
-          "center": {
-            "x": 105,
-            "y": 39
-          },
-          "size": "small"
-        },
-        {
-          "id": "ye_04",
-          "name": "汲郡",
-          "center": {
-            "x": 95,
-            "y": 40
-          },
-          "size": "small"
-        }
-      ]
-    },
-    {
-      "id": "pingyuan",
-      "name": "平原",
-      "position": {
-        "x": 118,
-        "y": 50
-      },
-      "max_durability": 1500,
-      "counties": [
-        {
-          "id": "pingyuan_01",
-          "name": "平原",
-          "center": {
-            "x": 118,
-            "y": 49
-          },
-          "size": "medium"
-        },
-        {
-          "id": "pingyuan_02",
-          "name": "乐陵",
-          "center": {
-            "x": 122,
-            "y": 47
-          },
-          "size": "small"
-        }
-      ]
-    },
-    {
-      "id": "beihai",
-      "name": "北海",
-      "position": {
-        "x": 142,
-        "y": 52
-      },
-      "max_durability": 1500,
-      "counties": [
-        {
-          "id": "beihai_01",
-          "name": "北海",
-          "center": {
-            "x": 142,
-            "y": 51
-          },
-          "size": "medium"
-        },
-        {
-          "id": "beihai_02",
-          "name": "东莱",
-          "center": {
-            "x": 148,
-            "y": 54
-          },
-          "size": "small"
-        }
-      ]
-    },
-    {
-      "id": "luoyang",
-      "name": "洛阳",
-      "position": {
-        "x": 88,
-        "y": 65
-      },
-      "max_durability": 3000,
-      "counties": [
-        {
-          "id": "luoyang_01",
-          "name": "洛阳",
-          "center": {
-            "x": 88,
-            "y": 64
-          },
-          "size": "large",
-          "special_resource": "gold_mine"
-        },
-        {
-          "id": "luoyang_02",
-          "name": "河南",
-          "center": {
-            "x": 90,
-            "y": 67
-          },
-          "size": "medium"
-        },
-        {
-          "id": "luoyang_03",
-          "name": "弘农",
-          "center": {
-            "x": 80,
-            "y": 63
-          },
-          "size": "small"
-        },
-        {
-          "id": "luoyang_04",
-          "name": "河东",
-          "center": {
-            "x": 84,
-            "y": 60
-          },
-          "size": "medium"
-        }
-      ]
-    },
-    {
-      "id": "changan",
-      "name": "长安",
-      "position": {
-        "x": 50,
-        "y": 62
-      },
-      "max_durability": 2800,
-      "counties": [
-        {
-          "id": "changan_01",
-          "name": "长安",
-          "center": {
-            "x": 50,
-            "y": 61
-          },
-          "size": "large",
-          "special_resource": "gold_mine"
-        },
-        {
-          "id": "changan_02",
-          "name": "京兆",
-          "center": {
-            "x": 48,
-            "y": 64
-          },
-          "size": "medium"
-        },
-        {
-          "id": "changan_03",
-          "name": "扶风",
-          "center": {
-            "x": 44,
-            "y": 60
-          },
-          "size": "medium"
-        },
-        {
-          "id": "changan_04",
-          "name": "冯翊",
-          "center": {
-            "x": 54,
-            "y": 58
-          },
-          "size": "small"
-        }
-      ]
-    },
-    {
-      "id": "xuchang",
-      "name": "许昌",
-      "position": {
-        "x": 98,
-        "y": 76
-      },
-      "max_durability": 2200,
-      "counties": [
-        {
-          "id": "xuchang_01",
-          "name": "许昌",
-          "center": {
-            "x": 98,
-            "y": 75
-          },
-          "size": "large",
-          "special_resource": "farmland"
-        },
-        {
-          "id": "xuchang_02",
-          "name": "颍川",
-          "center": {
-            "x": 95,
-            "y": 78
-          },
-          "size": "medium"
-        },
-        {
-          "id": "xuchang_03",
-          "name": "汝南",
-          "center": {
-            "x": 103,
-            "y": 80
-          },
-          "size": "medium"
-        }
-      ]
-    },
-    {
-      "id": "chenliu",
-      "name": "陈留",
-      "position": {
-        "x": 105,
-        "y": 62
-      },
-      "max_durability": 2000,
-      "counties": [
-        {
-          "id": "chenliu_01",
-          "name": "陈留",
-          "center": {
-            "x": 105,
-            "y": 61
-          },
-          "size": "medium"
-        },
-        {
-          "id": "chenliu_02",
-          "name": "济阴",
-          "center": {
-            "x": 110,
-            "y": 60
-          },
-          "size": "small"
-        },
-        {
-          "id": "chenliu_03",
-          "name": "梁郡",
-          "center": {
-            "x": 108,
-            "y": 65
-          },
-          "size": "small"
-        }
-      ]
-    },
-    {
-      "id": "puyang",
-      "name": "濮阳",
-      "position": {
-        "x": 115,
-        "y": 55
+        "x": 223,
+        "y": 1
       },
       "max_durability": 1800,
       "counties": [
         {
-          "id": "puyang_01",
-          "name": "濮阳",
+          "id": "changchun_01",
+          "name": "长春",
           "center": {
-            "x": 115,
-            "y": 54
+            "x": 223,
+            "y": 1
           },
-          "size": "medium"
+          "size": "large"
         },
         {
-          "id": "puyang_02",
-          "name": "东郡",
+          "id": "changchun_02",
+          "name": "长春郊",
           "center": {
-            "x": 112,
-            "y": 57
-          },
-          "size": "small"
-        }
-      ]
-    },
-    {
-      "id": "xiapi",
-      "name": "下邳",
-      "position": {
-        "x": 128,
-        "y": 72
-      },
-      "max_durability": 2000,
-      "counties": [
-        {
-          "id": "xiapi_01",
-          "name": "下邳",
-          "center": {
-            "x": 128,
-            "y": 71
-          },
-          "size": "medium"
-        },
-        {
-          "id": "xiapi_02",
-          "name": "彭城",
-          "center": {
-            "x": 125,
-            "y": 68
-          },
-          "size": "small"
-        },
-        {
-          "id": "xiapi_03",
-          "name": "广陵",
-          "center": {
-            "x": 130,
-            "y": 76
-          },
-          "size": "medium"
-        }
-      ]
-    },
-    {
-      "id": "shouchun",
-      "name": "寿春",
-      "position": {
-        "x": 112,
-        "y": 88
-      },
-      "max_durability": 2000,
-      "counties": [
-        {
-          "id": "shouchun_01",
-          "name": "寿春",
-          "center": {
-            "x": 112,
-            "y": 87
-          },
-          "size": "medium"
-        },
-        {
-          "id": "shouchun_02",
-          "name": "合肥",
-          "center": {
-            "x": 108,
-            "y": 90
-          },
-          "size": "small"
-        },
-        {
-          "id": "shouchun_03",
-          "name": "庐江",
-          "center": {
-            "x": 118,
-            "y": 93
-          },
-          "size": "medium"
-        }
-      ]
-    },
-    {
-      "id": "jianye",
-      "name": "建业",
-      "position": {
-        "x": 132,
-        "y": 100
-      },
-      "max_durability": 2500,
-      "counties": [
-        {
-          "id": "jianye_01",
-          "name": "建业",
-          "center": {
-            "x": 132,
-            "y": 99
-          },
-          "size": "large",
-          "special_resource": "iron_mine"
-        },
-        {
-          "id": "jianye_02",
-          "name": "丹阳",
-          "center": {
-            "x": 130,
-            "y": 103
-          },
-          "size": "medium"
-        },
-        {
-          "id": "jianye_03",
-          "name": "吴郡",
-          "center": {
-            "x": 138,
-            "y": 105
-          },
-          "size": "medium"
-        }
-      ]
-    },
-    {
-      "id": "wu",
-      "name": "吴",
-      "position": {
-        "x": 142,
-        "y": 112
-      },
-      "max_durability": 2200,
-      "counties": [
-        {
-          "id": "wu_01",
-          "name": "吴",
-          "center": {
-            "x": 142,
-            "y": 111
-          },
-          "size": "medium"
-        },
-        {
-          "id": "wu_02",
-          "name": "会稽",
-          "center": {
-            "x": 145,
-            "y": 116
-          },
-          "size": "medium"
-        }
-      ]
-    },
-    {
-      "id": "xiangyang",
-      "name": "襄阳",
-      "position": {
-        "x": 82,
-        "y": 90
-      },
-      "max_durability": 2500,
-      "counties": [
-        {
-          "id": "xiangyang_01",
-          "name": "襄阳",
-          "center": {
-            "x": 82,
-            "y": 89
-          },
-          "size": "large",
-          "special_resource": "farmland"
-        },
-        {
-          "id": "xiangyang_02",
-          "name": "南阳",
-          "center": {
-            "x": 85,
-            "y": 85
-          },
-          "size": "medium"
-        },
-        {
-          "id": "xiangyang_03",
-          "name": "新野",
-          "center": {
-            "x": 88,
-            "y": 82
-          },
-          "size": "small"
-        },
-        {
-          "id": "xiangyang_04",
-          "name": "江夏",
-          "center": {
-            "x": 95,
-            "y": 95
-          },
-          "size": "medium"
-        }
-      ]
-    },
-    {
-      "id": "jiangling",
-      "name": "江陵",
-      "position": {
-        "x": 72,
-        "y": 100
-      },
-      "max_durability": 2000,
-      "counties": [
-        {
-          "id": "jiangling_01",
-          "name": "江陵",
-          "center": {
-            "x": 72,
-            "y": 99
-          },
-          "size": "medium",
-          "special_resource": "farmland"
-        },
-        {
-          "id": "jiangling_02",
-          "name": "南郡",
-          "center": {
-            "x": 70,
-            "y": 103
-          },
-          "size": "small"
-        }
-      ]
-    },
-    {
-      "id": "changsha",
-      "name": "长沙",
-      "position": {
-        "x": 88,
-        "y": 118
-      },
-      "max_durability": 1800,
-      "counties": [
-        {
-          "id": "changsha_01",
-          "name": "长沙",
-          "center": {
-            "x": 88,
-            "y": 117
-          },
-          "size": "medium"
-        },
-        {
-          "id": "changsha_02",
-          "name": "零陵",
-          "center": {
-            "x": 80,
-            "y": 122
-          },
-          "size": "small"
-        },
-        {
-          "id": "changsha_03",
-          "name": "桂阳",
-          "center": {
-            "x": 92,
-            "y": 125
-          },
-          "size": "small"
-        }
-      ]
-    },
-    {
-      "id": "chengdu",
-      "name": "成都",
-      "position": {
-        "x": 22,
-        "y": 92
-      },
-      "max_durability": 2500,
-      "counties": [
-        {
-          "id": "chengdu_01",
-          "name": "成都",
-          "center": {
-            "x": 22,
-            "y": 91
-          },
-          "size": "large",
-          "special_resource": "farmland"
-        },
-        {
-          "id": "chengdu_02",
-          "name": "蜀郡",
-          "center": {
-            "x": 20,
-            "y": 94
-          },
-          "size": "medium"
-        },
-        {
-          "id": "chengdu_03",
-          "name": "江州",
-          "center": {
-            "x": 35,
-            "y": 98
-          },
-          "size": "medium"
-        }
-      ]
-    },
-    {
-      "id": "hanzhong",
-      "name": "汉中",
-      "position": {
-        "x": 42,
-        "y": 78
-      },
-      "max_durability": 2200,
-      "counties": [
-        {
-          "id": "hanzhong_01",
-          "name": "汉中",
-          "center": {
-            "x": 42,
-            "y": 77
-          },
-          "size": "medium",
-          "special_resource": "gold_mine"
-        },
-        {
-          "id": "hanzhong_02",
-          "name": "上庸",
-          "center": {
-            "x": 52,
-            "y": 80
+            "x": 225,
+            "y": 1
           },
           "size": "small"
         }
