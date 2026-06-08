@@ -152,6 +152,32 @@ func is_in_bounds(pos: Vector2i) -> bool:
 ## 移动范围 (BFS)
 ## ============================================================
 
+## ============================================================
+## 六边形顶点（城市扩张渲染）
+## ============================================================
+
+## 获取城市六边形的6个屏幕空间顶点（顺时针）
+## 视觉正六边形 — 压扁纵轴使角度均匀（sin60°≈0.866），不影响格子逻辑
+## 顶点顺序：右上→右→右下→左下→左→左上
+func get_hex_vertices_screen(gx: int, gy: int) -> PackedVector2Array:
+	var center = grid_to_screen(gx, gy)
+	var hw: float = TILE_SIZE          # 半宽 = 水平半径 = 96
+	var hh: float = TILE_SIZE * 0.866  # 半高 = 正六边形垂直半径 ≈ 83.1
+	var hw2: float = hw * 0.5          # 上下顶点 x 偏移 = 48
+	var offsets = [
+		Vector2(hw2, -hh),    # 右上
+		Vector2(hw, 0),       # 右
+		Vector2(hw2, hh),     # 右下
+		Vector2(-hw2, hh),    # 左下
+		Vector2(-hw, 0),      # 左
+		Vector2(-hw2, -hh),   # 左上
+	]
+	var vertices = PackedVector2Array()
+	for off in offsets:
+		vertices.append(center + off)
+	return vertices
+
+
 ## 获取移动范围内可达 tile（BFS，考虑移动力和地形消耗）
 func get_reachable_vertices(
 	start: Vector2i,

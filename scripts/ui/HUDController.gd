@@ -200,6 +200,7 @@ func _connect_signals() -> void:
 	# 游戏事件
 	EventBus.turn_ended.connect(_on_turn_ended)
 	EventBus.map_city_clicked.connect(_on_city_selected)
+	EventBus.map_pass_clicked.connect(_on_pass_selected)
 	EventBus.map_army_clicked.connect(_on_army_selected)
 	EventBus.map_vertex_clicked.connect(_on_vertex_selected)
 	EventBus.houkou_generated.connect(_on_houkou_generated)
@@ -624,6 +625,13 @@ func _on_city_selected(city_id: String) -> void:
 	_update_side_panel_city(city_id)
 
 
+func _on_pass_selected(pass_id: String) -> void:
+	_selected_city_id = ""
+	_selected_army_id = -1
+	print("HUD: Pass selected: %s" % pass_id)
+	_show_pass_info(pass_id)
+
+
 func _on_army_selected(army_id: int) -> void:
 	_selected_army_id = army_id
 	_selected_city_id = ""
@@ -705,6 +713,23 @@ func _update_side_panel_army(army_id: int) -> void:
 
 		if not commander.skills.is_empty():
 			_add_info_line("特技: %s" % ", ".join(commander.skills))
+
+
+func _show_pass_info(pass_id: String) -> void:
+	_clear_side_panel()
+	var pass_data = GameManager.get_pass_data(pass_id)
+	if pass_data.is_empty(): return
+
+	side_title.text = pass_data.get("name", "关口")
+	_add_info_line("耐久: %d / %d" % [pass_data.get("durability", pass_data.get("max_durability", 2000)), pass_data.get("max_durability", 2000)])
+	_add_info_line("防御加成: %d%%" % pass_data.get("defense_bonus", 0))
+	_add_separator()
+	var connects = pass_data.get("connects", [])
+	if not connects.is_empty():
+		_add_info_line("连接: %s" % ", ".join(connects))
+	var tiles = pass_data.get("tiles", [])
+	if tiles.size() >= 2:
+		_add_info_line("规模: 横跨%d格" % tiles.size())
 
 
 func _refresh_army_panel() -> void:

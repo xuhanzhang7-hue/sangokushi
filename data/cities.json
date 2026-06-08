@@ -115,6 +115,122 @@
           "size": "small"
         }
       ]
+    },
+    {
+      "id": "yecheng",
+      "name": "邺城",
+      "position": {
+        "x": 139,
+        "y": 71
+      },
+      "max_durability": 2400,
+      "counties": [
+        {
+          "id": "yecheng_01",
+          "name": "邺城",
+          "center": {
+            "x": 139,
+            "y": 71
+          },
+          "size": "large"
+        },
+        {
+          "id": "yecheng_02",
+          "name": "邺城郊",
+          "center": {
+            "x": 141,
+            "y": 71
+          },
+          "size": "small"
+        }
+      ]
+    },
+    {
+      "id": "cangzhou",
+      "name": "沧州",
+      "position": {
+        "x": 155,
+        "y": 64
+      },
+      "max_durability": 2200,
+      "counties": [
+        {
+          "id": "cangzhou_01",
+          "name": "沧州",
+          "center": {
+            "x": 155,
+            "y": 64
+          },
+          "size": "large"
+        },
+        {
+          "id": "cangzhou_02",
+          "name": "沧州郊",
+          "center": {
+            "x": 157,
+            "y": 64
+          },
+          "size": "small"
+        }
+      ]
+    },
+    {
+      "id": "kaifeng",
+      "name": "开封",
+      "position": {
+        "x": 143,
+        "y": 89
+      },
+      "max_durability": 2500,
+      "counties": [
+        {
+          "id": "kaifeng_01",
+          "name": "开封",
+          "center": {
+            "x": 143,
+            "y": 89
+          },
+          "size": "large"
+        },
+        {
+          "id": "kaifeng_02",
+          "name": "开封郊",
+          "center": {
+            "x": 145,
+            "y": 89
+          },
+          "size": "small"
+        }
+      ]
+    },
+    {
+      "id": "jinling",
+      "name": "金陵",
+      "position": {
+        "x": 173,
+        "y": 132
+      },
+      "max_durability": 2600,
+      "counties": [
+        {
+          "id": "jinling_01",
+          "name": "金陵",
+          "center": {
+            "x": 173,
+            "y": 132
+          },
+          "size": "large"
+        },
+        {
+          "id": "jinling_02",
+          "name": "金陵郊",
+          "center": {
+            "x": 175,
+            "y": 132
+          },
+          "size": "small"
+        }
+      ]
     }
   ]
 }

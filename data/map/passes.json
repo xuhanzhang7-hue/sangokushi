@@ -111,6 +111,24 @@
       ],
       "max_durability": 1800,
       "defense_bonus": 35
+    },
+    {
+      "id": "shanhai_guan",
+      "name": "山海关",
+      "position": {
+        "x": 176,
+        "y": 50
+      },
+      "tiles": [
+        {"x": 176, "y": 50},
+        {"x": 177, "y": 50}
+      ],
+      "connects": [
+        "beiping",
+        "shenyang"
+      ],
+      "max_durability": 2800,
+      "defense_bonus": 50
     }
   ]
 }

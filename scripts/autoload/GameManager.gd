@@ -24,6 +24,9 @@ var selected_army_id: int = -1
 var hovered_vertex: Vector2i = Vector2i(-1, -1)
 var battle_log: Array = []
 
+# 格子 → 城市 快速索引（支持七格扩张城）
+var _tile_to_city: Dictionary = {}
+
 
 func _ready() -> void:
 	print("GameManager: Initialized")
@@ -56,6 +59,7 @@ func _reset_state() -> void:
 	selected_city_id = ""
 	selected_county_id = ""
 	selected_army_id = -1
+	_tile_to_city.clear()
 
 
 func _setup_from_scenario(scenario: Dictionary) -> void:
@@ -189,8 +193,21 @@ func _setup_from_scenario(scenario: Dictionary) -> void:
 					leader.status = "太守"
 					print("Assigned %s as governor of %s" % [leader.name, cities[fcs[0]].name])
 
+	# Build tile-to-city index for fast lookup
+	_build_tile_to_city_index()
+
 	# Set player faction
 	player_faction_id = playable[0] if not playable.is_empty() else ""
+
+
+func _build_tile_to_city_index() -> void:
+	_tile_to_city.clear()
+	for city in cities.values():
+		if city.is_expanded():
+			for tile in city.get_hex_tiles():
+				_tile_to_city[str(tile)] = city.id
+		else:
+			_tile_to_city[str(city.position)] = city.id
 
 
 func get_officer(officer_id: int) -> Officer:
@@ -233,16 +250,29 @@ func get_army_at(x: int, y: int) -> Army:
 
 
 func get_city_at(x: int, y: int) -> City:
-	for city in cities.values():
-		if city.position.x == x and city.position.y == y:
-			return city
+	var key = str(Vector2i(x, y))
+	if key in _tile_to_city:
+		return cities.get(_tile_to_city[key], null)
 	return null
 
 
 func get_pass_at(x: int, y: int) -> Dictionary:
 	for pass_data in DataManager.get_all_passes():
-		var p = pass_data.get("position", {})
-		if p.get("x", -1) == x and p.get("y", -1) == y:
+		var tiles = pass_data.get("tiles", [])
+		if tiles.size() >= 2:
+			for t in tiles:
+				if t.get("x", -1) == x and t.get("y", -1) == y:
+					return pass_data
+		else:
+			var p = pass_data.get("position", {})
+			if p.get("x", -1) == x and p.get("y", -1) == y:
+				return pass_data
+	return {}
+
+
+func get_pass_data(pass_id: String) -> Dictionary:
+	for pass_data in DataManager.get_all_passes():
+		if pass_data.get("id", "") == pass_id:
 			return pass_data
 	return {}
 

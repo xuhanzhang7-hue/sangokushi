@@ -7,6 +7,7 @@ extends Node2D
 
 # 渲染层
 @onready var terrain_layer: Node2D = $TerrainLayer
+var road_layer: Node2D = null
 @onready var overlay_layer: Node2D = $OverlayLayer
 @onready var feature_layer: Node2D = $FeatureLayer
 @onready var unit_layer: Node2D = $UnitLayer
@@ -42,6 +43,9 @@ var edit_city_mode: bool = false  # true=放置城市模式
 var _edit_hover: Vector2i = Vector2i(-1, -1)
 var _edit_highlight: Sprite2D = null
 
+# 缓存：楷体加粗
+var _cached_kaiti_font: Font = null
+
 # ============================================================
 # 地形色板
 # ============================================================
@@ -52,14 +56,14 @@ const TERRAIN_COLORS: Dictionary = {
 	"forest":       Color(0.20, 0.38, 0.17),
 	"dense_forest": Color(0.12, 0.28, 0.10),
 	"hill":         Color(0.56, 0.50, 0.34),
-	"mountain":     Color(0.44, 0.39, 0.30),
-	"high_mountain":Color(0.42, 0.38, 0.32),
+	"mountain":     Color(0.62, 0.65, 0.38, 0.0),
+	"high_mountain":Color(0.62, 0.65, 0.38, 0.0),
 	"desert":       Color(0.78, 0.72, 0.48),
 	"wetland":      Color(0.30, 0.44, 0.30),
 	"water":        Color(0.16, 0.36, 0.55),
 	"ocean":        Color(0.08, 0.25, 0.50),
-	"road":         Color(0.65, 0.62, 0.42),
-	"guandao":      Color(0.72, 0.58, 0.30),
+	"road":         Color(0.62, 0.65, 0.38),
+	"guandao":      Color(0.62, 0.65, 0.38),
 	"city":         Color(0.82, 0.22, 0.18),
 }
 
@@ -111,16 +115,18 @@ func _ready() -> void:
 func _connect_signals() -> void:
 	EventBus.map_city_clicked.connect(_on_city_clicked)
 	EventBus.map_army_clicked.connect(_on_army_clicked)
+	EventBus.map_pass_clicked.connect(_on_pass_clicked)
 	EventBus.map_vertex_clicked.connect(_on_vertex_clicked)
 
 
 func _setup_layers() -> void:
-	for layer_name in ["TerrainLayer", "OverlayLayer", "FeatureLayer", "UnitLayer", "UILayer"]:
+	for layer_name in ["TerrainLayer", "RoadLayer", "OverlayLayer", "FeatureLayer", "UnitLayer", "UILayer"]:
 		var layer = get_node_or_null(layer_name)
 		if not layer:
 			layer = Node2D.new()
 			layer.name = layer_name
 			add_child(layer)
+	road_layer = $RoadLayer  # 动态创建后获取引用
 
 
 # ============================================================
@@ -132,6 +138,9 @@ func render_full_map() -> void:
 	var t0 = Time.get_ticks_msec()
 	render_terrain()
 	print("  Terrain: %dms" % (Time.get_ticks_msec() - t0))
+	t0 = Time.get_ticks_msec()
+	render_road_network()
+	print("  Roads: %dms" % (Time.get_ticks_msec() - t0))
 	t0 = Time.get_ticks_msec()
 	render_county_overlays()
 	print("  Overlays: %dms" % (Time.get_ticks_msec() - t0))
@@ -224,6 +233,92 @@ func show_edit_hover(gx: int, gy: int) -> void:
 	ui_layer.add_child(_edit_highlight)
 
 
+## 在山脉 tile 上绘制三角山符号
+func _draw_mountain_symbols(img: Image, terrain: String, base: Color) -> void:
+	# === 高度图法生成自然山脉 ===
+	var rng = RandomNumberGenerator.new()
+	rng.seed = (terrain.hash() + 999)
+	var W = TSI
+	var H = TSI
+
+	# 高度图数组
+	var hmap: Array = []
+	for _y in range(H):
+		var row: Array = []
+		for _x in range(W):
+			row.append(0.0)
+		hmap.append(row)
+
+	# 放几个山包（高斯峰）
+	var n_peaks = rng.randi_range(4, 7) if terrain == "high_mountain" else rng.randi_range(3, 5)
+	for _pi in range(n_peaks):
+		var cx = rng.randf_range(16.0, W - 16.0)
+		var cy = rng.randf_range(12.0, H - 20.0)
+		var amp = rng.randf_range(0.55, 0.95)
+		var sx = rng.randf_range(16.0, 32.0)   # 横向展宽
+		var sy = rng.randf_range(14.0, 28.0)   # 纵向展宽
+		var rot = rng.randf_range(-0.3, 0.3)   # 微小旋转
+		var cos_r = cos(rot); var sin_r = sin(rot)
+
+		for _py in range(H):
+			for _px in range(W):
+				var dx = _px - cx
+				var dy = _py - cy
+				var rx = dx * cos_r - dy * sin_r
+				var ry = dx * sin_r + dy * cos_r
+				var v = amp * exp(-0.5 * (rx*rx/(sx*sx) + ry*ry/(sy*sy)))
+				hmap[_py][_px] = max(hmap[_py][_px], v)
+
+	# 添加细小噪声模拟岩脊
+	for _ni in range(80):
+		var nx = rng.randi_range(0, W - 1)
+		var ny = rng.randi_range(0, H - 1)
+		var nv = rng.randf_range(0.03, 0.12)
+		var nr = rng.randi_range(2, 5)
+		for dy in range(-nr, nr + 1):
+			for dx in range(-nr, nr + 1):
+				var xx = nx + dx; var yy = ny + dy
+				if xx >= 0 and xx < W and yy >= 0 and yy < H:
+					var dist2 = dx*dx + dy*dy
+					if dist2 <= nr*nr:
+						hmap[yy][xx] = max(hmap[yy][xx], nv * (1.0 - sqrt(dist2)/nr))
+
+	# 高度 → 颜色映射
+	var c_low   = Color(0.42, 0.38, 0.30)   # 山脚土色
+	var c_mid   = Color(0.55, 0.48, 0.36)   # 中山岩色
+	var c_high  = Color(0.62, 0.56, 0.44)   # 亮岩
+	var c_snow  = Color(0.92, 0.91, 0.88)   # 雪
+	var c_snow2 = Color(0.78, 0.76, 0.72)   # 雪过渡
+
+	for _py in range(H):
+		for _px in range(W):
+			var h = hmap[_py][_px]
+			if h < 0.02: continue  # 不画（保持背景）
+			var col: Color
+			if h > 0.82:
+				col = c_snow2.lerp(c_snow, (h - 0.82) / 0.18)
+			elif h > 0.50:
+				var t = (h - 0.50) / 0.32
+				col = c_mid.lerp(c_high, t)
+			elif h > 0.15:
+				var t = (h - 0.15) / 0.35
+				col = c_low.lerp(c_mid, t)
+			else:
+				col = c_low.darkened(0.1 * (1.0 - h/0.15))
+			img.set_pixel(_px, _py, col)
+
+	# 加点岩脊暗线（沿高度图梯度方向画短暗线）
+	for _ri in range(40):
+		var rx = rng.randi_range(4, W - 5)
+		var ry = rng.randi_range(4, H - 5)
+		for _si in range(rng.randi_range(2, 5)):
+			if rx < 2 or rx >= W - 2 or ry < 2 or ry >= H - 2: break
+			if hmap[ry][rx] > 0.25:
+				var ex = img.get_pixel(rx, ry)
+				img.set_pixel(rx, ry, ex.darkened(0.12))
+			rx += rng.randi_range(-1, 1)
+			ry += rng.randi_range(-1, 1)
+
 ## 生成 tile 纹理（地形颜色 + 噪声 + 边框）
 func _get_tile_texture(terrain: String) -> ImageTexture:
 	if terrain in _tile_cache:
@@ -253,16 +348,21 @@ func _get_tile_texture(terrain: String) -> ImageTexture:
 				is_border = true
 
 			var col: Color
+			var is_road_tile = (terrain == "road" or terrain == "guandao")
 			if is_border:
-				# Border pixel — dark outline
-				col = BORDER_COLOR
-				# Top-left highlight for 3D bevel effect
-				if px < BORDER and py < BORDER:
-					col = BORDER_HIGHLIGHT
-				elif px < BORDER and py < TS / 4:
-					col = BORDER_HIGHLIGHT
-				elif py < BORDER and px < TS / 4:
-					col = BORDER_HIGHLIGHT
+				if is_road_tile:
+					# 道路格子 — 边框全透明，邻接时自然合并
+					col = Color.TRANSPARENT
+				else:
+					# Border pixel — dark outline
+					col = BORDER_COLOR
+					# Top-left highlight for 3D bevel effect
+					if px < BORDER and py < BORDER:
+						col = BORDER_HIGHLIGHT
+					elif px < BORDER and py < TS / 4:
+						col = BORDER_HIGHLIGHT
+					elif py < BORDER and px < TS / 4:
+						col = BORDER_HIGHLIGHT
 			else:
 				# Terrain body with subtle noise
 				var noise_amt = 0.04
@@ -272,19 +372,22 @@ func _get_tile_texture(terrain: String) -> ImageTexture:
 					"forest", "dense_forest":
 						noise_amt = 0.10
 					"mountain", "high_mountain":
-						noise_amt = 0.12
+						noise_amt = 0.0  # 用三角符号替代噪声
 					"desert":
 						noise_amt = 0.06
 					"water", "ocean":
 						noise_amt = 0.04
 					"wetland":
 						noise_amt = 0.08
+					"road", "guandao":
+						noise_amt = 0.0  # 道路无噪声，保证相邻格子完全融合
 
 				var v = (n - 0.5) * noise_amt * 2.0
 				col = Color(
 					clampf(base.r + v, 0.0, 1.0),
 					clampf(base.g + v, 0.0, 1.0),
-					clampf(base.b + v * 0.6, 0.0, 1.0)
+					clampf(base.b + v * 0.6, 0.0, 1.0),
+					base.a  # 保留 alpha（道路需要半透明）
 				)
 
 				# 特殊地形细节
@@ -300,9 +403,85 @@ func _get_tile_texture(terrain: String) -> ImageTexture:
 
 			img.set_pixel(px, py, col)
 
+	# 山脉绘制三角符号
+	if terrain in ["mountain", "high_mountain"]:
+		_draw_mountain_symbols(img, terrain, base)
+
 	var tex = ImageTexture.create_from_image(img)
 	_tile_cache[terrain] = tex
 	return tex
+
+
+# ============================================================
+# 道路网络渲染
+# ============================================================
+
+## 扫描所有道路 tile，纯圆头 Line2D 绘制 — 白底路面 + 双暗边，圆头自然重叠即平滑交汇
+func render_road_network() -> void:
+	_clear_layer(road_layer)
+	var drawn: Dictionary = {}
+
+	const ROAD_TYPES = ["road", "guandao"]
+	const CONNECT_TARGETS = ["road", "guandao", "city"]
+	const CREAM = Color(0.90, 0.86, 0.76, 0.92)
+	const DARK  = Color(0.18, 0.13, 0.06, 0.88)
+
+	for gy in range(DataManager.map_height):
+		for gx in range(DataManager.map_width):
+			var terrain = DataManager.get_terrain_at(gx, gy)
+			if terrain not in ROAD_TYPES:
+				continue
+
+			var center = grid_utils.grid_to_screen(gx, gy)
+
+			for adj in grid_utils.get_adjacent(Vector2i(gx, gy)):
+				var adj_terrain = DataManager.get_terrain_at(adj.x, adj.y)
+				if adj_terrain not in CONNECT_TARGETS:
+					continue
+
+				var edge_key = _make_edge_key(gx, gy, adj.x, adj.y)
+				if edge_key in drawn:
+					continue
+				drawn[edge_key] = true
+
+				var adj_center = grid_utils.grid_to_screen(adj.x, adj.y)
+				var is_guandao = (terrain == "guandao" or adj_terrain == "guandao")
+				var is_to_city = (adj_terrain == "city")
+				var hw: float = 11.0 if is_guandao else 7.0
+				var base_z = gy + 4
+
+				var dir = (adj_center - center).normalized()
+				var perp = Vector2(-dir.y, dir.x)
+
+				if is_to_city:
+					# 进城：单 cream Line2D，半透明融入
+					var l = Line2D.new()
+					l.points = PackedVector2Array([center, adj_center])
+					l.width = hw * 2.0
+					l.default_color = Color(CREAM, 0.65)
+					l.z_index = base_z
+					l.antialiased = true
+					l.begin_cap_mode = Line2D.LINE_CAP_ROUND
+					l.end_cap_mode = Line2D.LINE_CAP_ROUND
+					road_layer.add_child(l)
+					continue
+
+				# 纯 cream 路面，圆头自然重叠
+				var road = Line2D.new()
+				road.points = PackedVector2Array([center, adj_center])
+				road.width = hw * 2.0
+				road.default_color = CREAM
+				road.z_index = base_z
+				road.antialiased = true
+				road.begin_cap_mode = Line2D.LINE_CAP_ROUND
+				road.end_cap_mode = Line2D.LINE_CAP_ROUND
+				road_layer.add_child(road)
+
+
+func _make_edge_key(x1: int, y1: int, x2: int, y2: int) -> String:
+	if x1 < x2 or (x1 == x2 and y1 < y2):
+		return "%d,%d-%d,%d" % [x1, y1, x2, y2]
+	return "%d,%d-%d,%d" % [x2, y2, x1, y1]
 
 
 # ============================================================
@@ -370,7 +549,42 @@ func _create_city_marker(city: City) -> Node2D:
 	else:
 		color = Color(0.45, 0.45, 0.4)
 
-	# City base — colored square with border
+	if city.is_expanded():
+		_add_hexagon_marker(container, city, color)
+	else:
+		_add_square_marker(container, color)
+
+	# City name label
+	var label_y: float = -36 if city.is_expanded() else -38
+	var font_size: int = 36 if city.is_expanded() else 15
+	var label_font = _get_city_font() if city.is_expanded() else null
+
+	var shadow = Label.new()
+	shadow.text = city.name
+	shadow.position = Vector2(2, label_y - 2)
+	shadow.add_theme_font_size_override("font_size", font_size)
+	shadow.add_theme_color_override("font_color", Color(0, 0, 0, 0.8))
+	shadow.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	if label_font:
+		shadow.add_theme_font_override("font", label_font)
+	container.add_child(shadow)
+
+	var label = Label.new()
+	label.text = city.name
+	label.position = Vector2(0, label_y)
+	label.add_theme_font_size_override("font_size", font_size)
+	label.add_theme_color_override("font_color", Color(1.0, 0.93, 0.72))
+	label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.7))
+	label.add_theme_constant_override("outline_size", 2)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	if label_font:
+		label.add_theme_font_override("font", label_font)
+	container.add_child(label)
+
+	return container
+
+
+func _add_square_marker(container: Node2D, color: Color) -> void:
 	var size = 48.0
 	var img = Image.create(size, size, false, Image.FORMAT_RGBA8)
 	var city_bg = Color(color.r, color.g, color.b, 0.85)
@@ -389,27 +603,45 @@ func _create_city_marker(city: City) -> Node2D:
 	sprite.centered = true
 	container.add_child(sprite)
 
-	# City name label
-	var label_y = -38
-	var shadow = Label.new()
-	shadow.text = city.name
-	shadow.position = Vector2(1, label_y - 1)
-	shadow.add_theme_font_size_override("font_size", 15)
-	shadow.add_theme_color_override("font_color", Color(0, 0, 0, 0.7))
-	shadow.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	container.add_child(shadow)
 
-	var label = Label.new()
-	label.text = city.name
-	label.position = Vector2(0, label_y)
-	label.add_theme_font_size_override("font_size", 15)
-	label.add_theme_color_override("font_color", Color(1.0, 0.93, 0.72))
-	label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
-	label.add_theme_constant_override("outline_size", 1)
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	container.add_child(label)
+func _add_hexagon_marker(container: Node2D, city: City, color: Color) -> void:
+	# 获取六边形6个顶点（屏幕空间），转为容器本地坐标
+	var center_screen = grid_utils.grid_to_screen(city.position.x, city.position.y)
+	var hex_vertices = grid_utils.get_hex_vertices_screen(city.position.x, city.position.y)
+	var local_verts = PackedVector2Array()
+	for v in hex_vertices:
+		local_verts.append(v - center_screen)
 
-	return container
+	# 半透明填充
+	var fill = Polygon2D.new()
+	fill.polygon = local_verts
+	fill.color = Color(color.r, color.g, color.b, 0.25)
+	fill.z_index = -1
+	container.add_child(fill)
+
+	# 六边形边框 — 加粗加深
+	var border = Line2D.new()
+	var closed = PackedVector2Array()
+	closed.append_array(local_verts)
+	closed.append(local_verts[0])  # 闭合
+	border.points = closed
+	border.width = 5.0
+	border.default_color = Color(0.05, 0.03, 0.01, 0.92)  # 深黑棕
+	border.z_index = -1
+	border.antialiased = true
+	container.add_child(border)
+
+
+## 获取楷体加粗字体（缓存）
+func _get_city_font() -> Font:
+	if _cached_kaiti_font:
+		return _cached_kaiti_font
+	var sf = SystemFont.new()
+	sf.font_names = PackedStringArray(["KaiTi", "楷体", "STKaiti"])
+	sf.font_weight = 900  # 极粗体
+	sf.antialiasing = TextServer.FONT_ANTIALIASING_GRAY
+	_cached_kaiti_font = sf
+	return sf
 
 
 # ============================================================
@@ -418,21 +650,142 @@ func _create_city_marker(city: City) -> Node2D:
 
 func render_passes() -> void:
 	for pass_data in DataManager.get_all_passes():
-		var p = pass_data.get("position", {})
-		var sx = p.get("x", 0); var sy = p.get("y", 0)
-		var screen_pos = grid_utils.grid_to_screen(sx, sy)
-		_add_small_marker(screen_pos, sy, Color(0.70, 0.52, 0.25, 0.9))
+		var tiles = pass_data.get("tiles", [])
+		if tiles.size() >= 2:
+			_render_multitile_pass(pass_data, tiles)
+		else:
+			var p = pass_data.get("position", {})
+			var sx = p.get("x", 0); var sy = p.get("y", 0)
+			var screen_pos = grid_utils.grid_to_screen(sx, sy)
+			_add_small_marker(screen_pos, sy, Color(0.70, 0.52, 0.25, 0.9))
 
-		var label = Label.new()
-		label.text = pass_data.get("name", "")
-		label.position = screen_pos + Vector2(0, -22)
-		label.add_theme_font_size_override("font_size", 11)
-		label.add_theme_color_override("font_color", Color(1, 0.86, 0.62))
-		label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
-		label.add_theme_constant_override("outline_size", 1)
-		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		label.z_index = sy + 51
-		feature_layer.add_child(label)
+			var label = Label.new()
+			label.text = pass_data.get("name", "")
+			label.position = screen_pos + Vector2(0, -22)
+			label.add_theme_font_size_override("font_size", 11)
+			label.add_theme_color_override("font_color", Color(1, 0.86, 0.62))
+			label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
+			label.add_theme_constant_override("outline_size", 1)
+			label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			label.z_index = sy + 51
+			feature_layer.add_child(label)
+
+
+func _render_multitile_pass(pass_data: Dictionary, tiles: Array) -> void:
+	# 收集所有 tile 的屏幕坐标和边界
+	var positions: Array = []
+	var min_x = INF; var max_x = -INF; var mid_y = 0.0
+	for t in tiles:
+		var gx = t.get("x", 0); var gy = t.get("y", 0)
+		var sp = grid_utils.grid_to_screen(gx, gy)
+		positions.append({"gx": gx, "gy": gy, "screen": sp})
+		min_x = min(min_x, sp.x); max_x = max(max_x, sp.x)
+		mid_y += sp.y
+	mid_y /= positions.size()
+	var center_x = (min_x + max_x) / 2.0
+	var total_w = max_x - min_x + TS
+
+	# === 城墙 ===
+	var wall_h = 28.0
+	var wall_img = Image.create(total_w, wall_h, false, Image.FORMAT_RGBA8)
+	# 石墙基色 + 垛口
+	var stone = Color(0.45, 0.40, 0.33)
+	var stone_dark = Color(0.28, 0.24, 0.18)
+	for px in range(total_w):
+		for py in range(wall_h):
+			var col = stone
+			# 垛口（城垛）
+			if py < 8 and (px % 14 < 10):
+				col = stone
+			elif py < 6:
+				col = stone_dark
+			# 砖缝横线
+			if py % 7 == 0: col = col.darkened(0.08)
+			# 竖缝
+			if px % 18 == 0: col = col.darkened(0.05)
+			wall_img.set_pixel(px, py, col)
+
+	var wall_tex = ImageTexture.create_from_image(wall_img)
+	var wall = Sprite2D.new()
+	wall.texture = wall_tex
+	wall.position = Vector2(center_x, mid_y)
+	wall.centered = true
+	wall.z_index = mid_y / TS + 48
+	feature_layer.add_child(wall)
+
+	# === 城楼（每格一个） ===
+	for pos in positions:
+		var sp = pos.screen
+		var px = sp.x; var py = sp.y
+		var gy = pos.gy
+
+		# 城台（基座）
+		var base_w = 44; var base_h = 36
+		var base_img = Image.create(base_w, base_h, false, Image.FORMAT_RGBA8)
+		for bx in range(base_w):
+			for by in range(base_h):
+				var col = stone
+				if bx < 3 or bx >= base_w - 3 or by >= base_h - 3: col = stone_dark
+				base_img.set_pixel(bx, by, col)
+		var base_tex = ImageTexture.create_from_image(base_img)
+		var base = Sprite2D.new()
+		base.texture = base_tex
+		base.position = Vector2(px, py - 4)
+		base.centered = true
+		base.z_index = gy + 49
+		feature_layer.add_child(base)
+
+		# 城楼主体
+		var tower_w = 32; var tower_h = 28
+		var tower_img = Image.create(tower_w, tower_h, false, Image.FORMAT_RGBA8)
+		var wood = Color(0.55, 0.38, 0.22)
+		var wood_dark = Color(0.35, 0.22, 0.10)
+		for tx in range(tower_w):
+			for ty in range(tower_h):
+				var col = wood
+				if tx < 2 or tx >= tower_w - 2: col = wood_dark
+				if ty < 2: col = wood_dark
+				# 窗户
+				if ty > 6 and ty < 16 and (tx > 6 and tx < 12 or tx > 20 and tx < 26):
+					col = Color(0.1, 0.08, 0.04)
+				tower_img.set_pixel(tx, ty, col)
+		var tower_tex = ImageTexture.create_from_image(tower_img)
+		var tower = Sprite2D.new()
+		tower.texture = tower_tex
+		tower.position = Vector2(px, py - base_h/2 - tower_h/2 + 2)
+		tower.centered = true
+		tower.z_index = gy + 50
+		feature_layer.add_child(tower)
+
+		# 屋顶（三角尖顶）
+		var roof_w = 40; var roof_h = 16
+		var roof_img = Image.create(roof_w, roof_h, false, Image.FORMAT_RGBA8)
+		roof_img.fill(Color.TRANSPARENT)
+		var roof_color = Color(0.25, 0.18, 0.08)
+		for ry in range(roof_h):
+			var rw = int(float(roof_w) * (float(ry) / roof_h))
+			for rx in range((roof_w - rw)/2, (roof_w + rw)/2):
+				if rx >= 0 and rx < roof_w:
+					roof_img.set_pixel(rx, ry, roof_color)
+		var roof_tex = ImageTexture.create_from_image(roof_img)
+		var roof = Sprite2D.new()
+		roof.texture = roof_tex
+		roof.position = Vector2(px, py - base_h/2 - tower_h + 3)
+		roof.centered = true
+		roof.z_index = gy + 51
+		feature_layer.add_child(roof)
+
+	# === 名牌 ===
+	var name_label = Label.new()
+	name_label.text = pass_data.get("name", "")
+	name_label.position = Vector2(center_x, mid_y - wall_h - 28)
+	name_label.add_theme_font_size_override("font_size", 16)
+	name_label.add_theme_color_override("font_color", Color(1, 0.90, 0.65))
+	name_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.7))
+	name_label.add_theme_constant_override("outline_size", 2)
+	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	name_label.z_index = 100
+	feature_layer.add_child(name_label)
 
 
 func render_harbors() -> void:
@@ -598,6 +951,19 @@ func _on_city_clicked(city_id: String) -> void:
 	var city = GameManager.get_city(city_id)
 	if city:
 		highlight_vertex(city.position.x, city.position.y)
+
+
+func _on_pass_clicked(pass_id: String) -> void:
+	var pass_data = GameManager.get_pass_data(pass_id)
+	if pass_data.is_empty():
+		return
+	var tiles = pass_data.get("tiles", [])
+	if tiles.size() >= 2:
+		for t in tiles:
+			highlight_vertex(t.get("x", 0), t.get("y", 0))
+	else:
+		var p = pass_data.get("position", {})
+		highlight_vertex(p.get("x", 0), p.get("y", 0))
 
 
 func _on_army_clicked(army_id: int) -> void:

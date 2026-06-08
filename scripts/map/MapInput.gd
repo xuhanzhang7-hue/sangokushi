@@ -366,6 +366,9 @@ func _paint_at(screen_pos: Vector2) -> void:
 				DataManager.set_terrain_at(px, py, terrain)
 				renderer.update_tile(px, py, terrain)
 
+	# 道路地形实时刷新路网
+	if terrain in ["road", "guandao"]:
+		renderer.render_road_network()
 
 func _set_brush(size: int) -> void:
 	var renderer = get_node_or_null(map_renderer)

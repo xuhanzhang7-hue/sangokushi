@@ -77,3 +77,24 @@ func has_governor(county_id: String) -> bool:
 
 func is_owned() -> bool:
 	return faction_id != ""
+
+
+const EXPANDED_CITY_IDS: Array[String] = ["jinyang", "beiping", "yecheng", "cangzhou", "kaifeng"]
+
+
+## 判断该城是否已扩张为七格六边形
+func is_expanded() -> bool:
+	return id in EXPANDED_CITY_IDS
+
+
+## 获取七格城市区域（中心 + 6邻接格子）
+func get_hex_tiles() -> Array[Vector2i]:
+	var tiles: Array[Vector2i] = [position]
+	var nb: Array
+	if position.y & 1:
+		nb = [[position.x, position.y - 1], [position.x + 1, position.y - 1], [position.x - 1, position.y], [position.x + 1, position.y], [position.x, position.y + 1], [position.x + 1, position.y + 1]]
+	else:
+		nb = [[position.x - 1, position.y - 1], [position.x, position.y - 1], [position.x - 1, position.y], [position.x + 1, position.y], [position.x - 1, position.y + 1], [position.x, position.y + 1]]
+	for pair in nb:
+		tiles.append(Vector2i(pair[0], pair[1]))
+	return tiles
