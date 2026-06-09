@@ -5,7 +5,8 @@ var id: String
 var name: String
 var leader_id: int = 0
 var color: Color = Color.WHITE
-var cities: Array = []       # 城市ID列表
+var cities: Array = []       # 府ID列表（prefectures）
+var commanderies: Array = []  # 独立持有的郡ID列表
 var officers: Array = []        # 武将ID列表
 var gold: int = 0
 var food: int = 0
@@ -18,7 +19,10 @@ func from_dict(d: Dictionary) -> void:
 	id = d.get("id", "")
 	name = d.get("name", "")
 	leader_id = d.get("leader_id", 0); if leader_id == null: leader_id = 0
-	cities = d.get("cities", [])
+	# 兼容 "prefectures", "cities" 两种键名
+	var pf = d.get("prefectures", d.get("cities", []))
+	cities = pf if pf is Array else []
+	commanderies = d.get("commanderies", [])
 	gold = d.get("gold", 0)
 	food = d.get("food", 0)
 	tech_levels = d.get("tech_levels", {})
@@ -40,11 +44,15 @@ func get_total_troops(cities_dict: Dictionary) -> int:
 	for city_id in cities:
 		if city_id in cities_dict:
 			total += cities_dict[city_id].get_total_troops()
+	# 郡也计入兵力
+	for cmd_id in commanderies:
+		if cmd_id in cities_dict:
+			total += cities_dict[cmd_id].get_total_troops()
 	return total
 
 
 func get_city_count() -> int:
-	return cities.size()
+	return cities.size() + commanderies.size()
 
 
 func is_at_war_with(faction_id: String) -> bool:
@@ -83,3 +91,16 @@ func add_officer(officer_id: int) -> void:
 
 func remove_officer(officer_id: int) -> void:
 	officers.erase(officer_id)
+
+
+func has_commandery(cmd_id: String) -> bool:
+	return cmd_id in commanderies
+
+
+func add_commandery(cmd_id: String) -> void:
+	if cmd_id not in commanderies:
+		commanderies.append(cmd_id)
+
+
+func remove_commandery(cmd_id: String) -> void:
+	commanderies.erase(cmd_id)

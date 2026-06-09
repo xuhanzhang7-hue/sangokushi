@@ -240,11 +240,18 @@ func _resolve_siege(army: Army, city: City) -> void:
 		city.faction_id = army.faction_id
 		var faction = GameManager.get_faction(army.faction_id)
 		if faction:
-			faction.cities.append(city.id)
+			if city.type == "commandery":
+				faction.add_commandery(city.id)
+			else:
+				faction.cities.append(city.id)
 		var old_fac = GameManager.get_faction(old_faction)
 		if old_fac:
-			old_fac.cities.erase(city.id)
-		print("  %s has fallen! Now belongs to %s" % [city.name, faction.name if faction else "?"])
+			if city.type == "commandery":
+				old_fac.remove_commandery(city.id)
+			else:
+				old_fac.cities.erase(city.id)
+		var type_str = "[郡]" if city.type == "commandery" else "[府]"
+		print("  %s %s has fallen! Now belongs to %s" % [type_str, city.name, faction.name if faction else "?"])
 		EventBus.city_captured.emit(city.id, old_faction, army.faction_id)
 
 	print("=== SIEGE END ===")

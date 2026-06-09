@@ -529,10 +529,25 @@ func _make_square_overlay(color: Color) -> ImageTexture:
 
 func render_cities() -> void:
 	_city_sprites.clear()
+	# 收集府的位置，用于跳过同位置的府治郡
+	var prefecture_positions: Dictionary = {}
+	for city in GameManager.cities.values():
+		if city.type == "prefecture":
+			prefecture_positions[str(city.position)] = true
+	
 	for city in GameManager.cities.values():
 		var pos = city.position
+		# 跳过与府同位置的府治郡（如承德府的承德郡）
+		if (city.type == "commandery" or city.type == "pass") and str(pos) in prefecture_positions:
+			continue
 		var screen_pos = grid_utils.grid_to_screen(pos.x, pos.y)
-		var marker = _create_city_marker(city)
+		var marker: Node2D
+		if city.type == "commandery":
+			marker = _create_commandery_marker(city)
+		elif city.type == "pass":
+			marker = _create_pass_marker(city)
+		else:
+			marker = _create_city_marker(city)
 		marker.position = screen_pos
 		marker.z_index = pos.y + 50
 		feature_layer.add_child(marker)
@@ -555,15 +570,15 @@ func _create_city_marker(city: City) -> Node2D:
 		_add_square_marker(container, color)
 
 	# City name label
-	var label_y: float = -36 if city.is_expanded() else -38
-	var font_size: int = 36 if city.is_expanded() else 15
+	var label_y: float = 0 if city.is_expanded() else -42
+	var font_size: int = 144 if city.is_expanded() else 18
 	var label_font = _get_city_font() if city.is_expanded() else null
 
 	var shadow = Label.new()
 	shadow.text = city.name
-	shadow.position = Vector2(2, label_y - 2)
+	shadow.position = Vector2(3, label_y + 3)
 	shadow.add_theme_font_size_override("font_size", font_size)
-	shadow.add_theme_color_override("font_color", Color(0, 0, 0, 0.8))
+	shadow.add_theme_color_override("font_color", Color(0, 0, 0, 0.9))
 	shadow.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	if label_font:
 		shadow.add_theme_font_override("font", label_font)
@@ -574,8 +589,8 @@ func _create_city_marker(city: City) -> Node2D:
 	label.position = Vector2(0, label_y)
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", Color(1.0, 0.93, 0.72))
-	label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.7))
-	label.add_theme_constant_override("outline_size", 2)
+	label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+	label.add_theme_constant_override("outline_size", 5)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	if label_font:
 		label.add_theme_font_override("font", label_font)
@@ -630,6 +645,129 @@ func _add_hexagon_marker(container: Node2D, city: City, color: Color) -> void:
 	border.z_index = -1
 	border.antialiased = true
 	container.add_child(border)
+
+
+func _create_commandery_marker(cmd: City) -> Node2D:
+	var container = Node2D.new()
+
+	var color: Color
+	if cmd.is_owned():
+		var faction = GameManager.get_faction(cmd.faction_id)
+		color = faction.color if faction else Color(0.5, 0.5, 0.4)
+	else:
+		color = Color(0.45, 0.45, 0.4)
+
+	# 正方形标记（郡用）— 占满整个 tile
+	var size = float(TSI)  # = 96，整格大小
+	var img = Image.create(size, size, false, Image.FORMAT_RGBA8)
+	var cmd_bg = Color(color.r, color.g, color.b, 0.55)
+	var cmd_border = Color(color.r * 0.5, color.g * 0.5, color.b * 0.5, 0.95)
+	for px in range(size):
+		for py in range(size):
+			# 粗边框（5px）
+			var is_edge = px < 5 or px >= size - 5 or py < 5 or py >= size - 5
+			if is_edge:
+				img.set_pixel(px, py, cmd_border)
+			else:
+				img.set_pixel(px, py, cmd_bg)
+	var tex = ImageTexture.create_from_image(img)
+	var sprite = Sprite2D.new()
+	sprite.texture = tex
+	sprite.centered = true
+	container.add_child(sprite)
+
+	# 郡名标签 — 居中、超大、加粗
+	var cmd_font = _get_city_font()
+	
+	var shadow = Label.new()
+	shadow.text = cmd.name
+	shadow.position = Vector2(3, 3)
+	shadow.add_theme_font_size_override("font_size", 80)
+	shadow.add_theme_color_override("font_color", Color(0, 0, 0, 0.9))
+	shadow.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	if cmd_font:
+		shadow.add_theme_font_override("font", cmd_font)
+	container.add_child(shadow)
+	
+	var label = Label.new()
+	label.text = cmd.name
+	label.position = Vector2(0, 0)
+	label.add_theme_font_size_override("font_size", 80)
+	label.add_theme_color_override("font_color", Color(1.0, 0.93, 0.72))
+	label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+	label.add_theme_constant_override("outline_size", 5)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	if cmd_font:
+		label.add_theme_font_override("font", cmd_font)
+	container.add_child(label)
+
+	return container
+
+
+func _create_pass_marker(city: City) -> Node2D:
+	var container = Node2D.new()
+
+	var color: Color
+	if city.is_owned():
+		var faction = GameManager.get_faction(city.faction_id)
+		color = faction.color if faction else Color(0.5, 0.5, 0.4)
+	else:
+		color = Color(0.45, 0.45, 0.4)
+
+	# 精确计算：矩形宽 = tile数 * TILE_SIZE，高 = TILE_SIZE
+	var tiles = city.tiles
+	var n_tiles: int = tiles.size()
+	var rect_w: int = int(TS) * n_tiles  # 精确 192px（2格）
+	var rect_h: int = int(TS)             # 精确 96px
+
+	# 容器已定位在第一个 tile，矩形需向右偏移半格到两格中点
+	var fill_offset = Vector2(TS / 2.0, 0) if n_tiles >= 2 else Vector2.ZERO
+
+	# 半透明填充 — 精密 image
+	var fill_img = Image.create(rect_w, rect_h, false, Image.FORMAT_RGBA8)
+	var cmd_bg = Color(color.r, color.g, color.b, 0.45)
+	var cmd_border = Color(color.r * 0.5, color.g * 0.5, color.b * 0.5, 0.95)
+	for px in range(rect_w):
+		for py in range(rect_h):
+			var is_edge = px < 10 or px >= rect_w - 10 or py < 10 or py >= rect_h - 10
+			if is_edge:
+				fill_img.set_pixel(px, py, cmd_border)
+			else:
+				fill_img.set_pixel(px, py, cmd_bg)
+	var fill_tex = ImageTexture.create_from_image(fill_img)
+	var fill = Sprite2D.new()
+	fill.texture = fill_tex
+	fill.position = fill_offset
+	fill.centered = true
+	fill.z_index = -1
+	container.add_child(fill)
+
+	# 名称标签 — 大字号，在矩形上方居中
+	var pass_font = _get_city_font()
+
+	var shadow = Label.new()
+	shadow.text = city.name
+	shadow.position = fill_offset + Vector2(3, -rect_h / 2 - 54)
+	shadow.add_theme_font_size_override("font_size", 64)
+	shadow.add_theme_color_override("font_color", Color(0, 0, 0, 0.9))
+	shadow.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	if pass_font:
+		shadow.add_theme_font_override("font", pass_font)
+	container.add_child(shadow)
+
+	var label = Label.new()
+	label.text = city.name
+	label.position = fill_offset + Vector2(0, -rect_h / 2 - 56)
+	label.add_theme_font_size_override("font_size", 64)
+	label.add_theme_color_override("font_color", Color(1.0, 0.84, 0.3))
+	label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+	label.add_theme_constant_override("outline_size", 5)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	if pass_font:
+		label.add_theme_font_override("font", pass_font)
+	container.add_child(label)
+
+	return container
 
 
 ## 获取楷体加粗字体（缓存）

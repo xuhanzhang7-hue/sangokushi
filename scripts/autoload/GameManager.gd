@@ -24,8 +24,9 @@ var selected_army_id: int = -1
 var hovered_vertex: Vector2i = Vector2i(-1, -1)
 var battle_log: Array = []
 
-# 格子 → 城市 快速索引（支持七格扩张城）
+# 格子 → 城市/郡 快速索引（支持七格扩张城 + 单格郡）
 var _tile_to_city: Dictionary = {}
+var _tile_to_commandery: Dictionary = {}
 
 
 func _ready() -> void:
@@ -60,6 +61,7 @@ func _reset_state() -> void:
 	selected_county_id = ""
 	selected_army_id = -1
 	_tile_to_city.clear()
+	_tile_to_commandery.clear()
 
 
 func _setup_from_scenario(scenario: Dictionary) -> void:
@@ -74,18 +76,61 @@ func _setup_from_scenario(scenario: Dictionary) -> void:
 		faction.from_dict(fd)
 		factions[faction.id] = faction
 
-	# Create cities
+	# Create cities (府) from prefecture data
 	var all_city_data = DataManager.get_all_cities()
 	for cd in all_city_data:
 		var city = City.new()
 		city.from_dict(cd)
 		cities[city.id] = city
 
-	# Assign cities to factions and set initial resources
+	# Create commandery entities (郡) — 单格，独立可交互
+	var all_cmd_data = DataManager.get_all_commanderies()
+	for cmd in all_cmd_data:
+		var cmd_city = City.new()
+		var is_pass = (cmd.get("type", "") == "pass")
+		var cmd_type = "pass" if is_pass else "commandery"
+		var cmd_tiles = cmd.get("tiles", [])
+		var cmd_center = cmd.get("center", {})
+		if cmd_center.is_empty() and not cmd_tiles.is_empty():
+			cmd_center = {"x": cmd_tiles[0][0], "y": cmd_tiles[0][1]}
+		var cmd_durability = cmd.get("max_durability", 2800 if is_pass else 800)
+		var synthetic_county = {
+			"id": cmd["id"],
+			"name": cmd["name"],
+			"center": cmd_center,
+			"size": "small",
+			"prefecture_id": cmd.get("prefecture_id", ""),
+			"capabilities": cmd.get("capabilities", []),
+			"troops": 500,
+		}
+		var cmd_dict = {
+			"id": cmd["id"],
+			"name": cmd["name"],
+			"type": cmd_type,
+			"center": cmd_center,
+			"position": cmd_center,
+			"tiles": cmd_tiles,
+			"max_durability": cmd_durability,
+			"defense_bonus": cmd.get("defense_bonus", 0),
+			"prefecture_id": cmd.get("prefecture_id", ""),
+			"capabilities": cmd.get("capabilities", []),
+			"counties": [synthetic_county],
+		}
+		cmd_city.from_dict(cmd_dict)
+		cmd_city.type = cmd_type
+		cities[cmd_city.id] = cmd_city
+
+	# Assign cities (府+郡) to factions
 	for fd in faction_list:
 		var fid = fd.get("id", "")
-		var city_ids = fd.get("cities", [])
-		for cid in city_ids:
+		# 兼容 "prefectures" 和 "cities"
+		var pf_ids = fd.get("prefectures", fd.get("cities", []))
+		for cid in pf_ids:
+			if cid in cities:
+				cities[cid].faction_id = fid
+		# 分配郡
+		var cmd_ids = fd.get("commanderies", [])
+		for cid in cmd_ids:
 			if cid in cities:
 				cities[cid].faction_id = fid
 		if fid in factions:
@@ -184,7 +229,8 @@ func _setup_from_scenario(scenario: Dictionary) -> void:
 		var fid = fd.get("id", "")
 		var lid = fd.get("leader_id", 0)
 		if fid in factions and lid > 0:
-			var fcs = factions[fid].cities
+			var pf = fd.get("prefectures", fd.get("cities", []))
+			var fcs = pf if pf is Array else []
 			if not fcs.is_empty() and fcs[0] in cities:
 				cities[fcs[0]].governor_id = lid
 				var leader = get_officer(lid)
@@ -202,8 +248,20 @@ func _setup_from_scenario(scenario: Dictionary) -> void:
 
 func _build_tile_to_city_index() -> void:
 	_tile_to_city.clear()
+	_tile_to_commandery.clear()
 	for city in cities.values():
-		if city.is_expanded():
+		if city.type == "commandery" or city.type == "pass":
+			# 郡/关卡 — 单格或多格
+			if city.type == "pass" and not city.tiles.is_empty():
+				for tile in city.tiles:
+					var tv = Vector2i(tile[0], tile[1])
+					_tile_to_city[str(tv)] = city.id
+					_tile_to_commandery[str(tv)] = city.id
+			else:
+				_tile_to_city[str(city.position)] = city.id
+				_tile_to_commandery[str(city.position)] = city.id
+		elif city.is_expanded():
+			# 府 — 七格六边形
 			for tile in city.get_hex_tiles():
 				_tile_to_city[str(tile)] = city.id
 		else:
@@ -239,6 +297,9 @@ func get_player_cities() -> Array:
 		for cid in faction.cities:
 			if cid in cities:
 				result.append(cities[cid])
+		for cid in faction.commanderies:
+			if cid in cities:
+				result.append(cities[cid])
 	return result
 
 
@@ -253,6 +314,13 @@ func get_city_at(x: int, y: int) -> City:
 	var key = str(Vector2i(x, y))
 	if key in _tile_to_city:
 		return cities.get(_tile_to_city[key], null)
+	return null
+
+
+func get_commandery_at(x: int, y: int) -> City:
+	var key = str(Vector2i(x, y))
+	if key in _tile_to_commandery:
+		return cities.get(_tile_to_commandery[key], null)
 	return null
 
 
@@ -291,6 +359,11 @@ func select_vertex(x: int, y: int) -> void:
 	if city:
 		selected_city_id = city.id
 		EventBus.map_city_clicked.emit(city.id)
+		return
+	var commandery = get_commandery_at(x, y)
+	if commandery:
+		selected_city_id = commandery.id
+		EventBus.map_city_clicked.emit(commandery.id)
 		return
 	var army = get_army_at(x, y)
 	if army:

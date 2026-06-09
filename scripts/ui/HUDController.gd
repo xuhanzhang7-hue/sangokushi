@@ -415,6 +415,47 @@ func _refresh_military_form(container: VBoxContainer, state: Dictionary, my_citi
 				)
 				container.add_child(btn)
 
+	# If no governor found but city has officers (e.g. commandery), show all officers
+	if state.commander_id <= 0 and not city.officers.is_empty():
+		var any_shown = false
+		for oid in city.officers:
+			var officer = GameManager.get_officer(oid)
+			if officer and officer.faction_id == GameManager.player_faction_id:
+				if not any_shown:
+					var other_label = Label.new()
+					other_label.text = "主将 (城内武将):"
+					other_label.add_theme_font_size_override("font_size", 13)
+					other_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
+					container.add_child(other_label)
+					any_shown = true
+				var total_troops = city.get_total_troops()
+				var btn = Button.new()
+				btn.text = "%s 统%d武%d  可率:%d兵" % [officer.name, officer.get_stat("tong"), officer.get_stat("wu"), total_troops]
+				btn.add_theme_font_size_override("font_size", 12)
+				if state.commander_id == officer.id:
+					btn.text = "V " + btn.text
+				var oid_capture = officer.id
+				btn.pressed.connect(func():
+					state.commander_id = oid_capture
+					state.sub_ids = []
+					state.troops = total_troops
+					_refresh_military_form(container, state, my_cities, faction)
+				)
+				container.add_child(btn)
+		# Fallback: no officers but city has troops (garrison dispatch)
+	if state.commander_id <= 0 and city.get_total_troops() > 0:
+		var total_troops = city.get_total_troops()
+		var btn = Button.new()
+		btn.text = '[ garrison ] Dispatch %d troops (no commander)' % total_troops
+		btn.add_theme_font_size_override('font_size', 12)
+		btn.add_theme_color_override('font_color', Color(1.0, 0.7, 0.4))
+		btn.pressed.connect(func():
+			state.commander_id = -999  # garrison marker
+			state.sub_ids = []
+			state.troops = total_troops
+			_refresh_military_form(container, state, my_cities, faction)
+		)
+		container.add_child(btn)
 	if state.commander_id <= 0:
 		return
 
@@ -535,7 +576,7 @@ func _on_destination_selected(grid_pos: Vector2i) -> void:
 		return
 
 	var commander = GameManager.get_officer(pd.commander_id)
-	if not commander: return
+	if not commander and pd.commander_id != -999: return
 
 	faction.gold -= pd.cost_gold
 	faction.food -= pd.cost_food
@@ -565,11 +606,18 @@ func _on_destination_selected(grid_pos: Vector2i) -> void:
 				county.troops -= take
 				remaining -= take
 
+	# Fallback: if commander is a general officer (not governor), deduct from first county
+	if remaining > 0 and not city.counties.is_empty():
+		var first_county = city.counties[0]
+		var take = mini(remaining, first_county.troops)
+		first_county.troops -= take
+		remaining -= take
+
 	var army = Army.new()
 	army.id = GameManager._next_army_id
 	GameManager._next_army_id += 1
 	army.faction_id = faction.id
-	army.commander_id = commander.id
+	army.commander_id = commander.id if commander else -999
 	army.unit_type = pd.unit
 	army.troops = pd.troops - remaining
 	army.max_troops = pd.troops
@@ -641,7 +689,17 @@ func _on_army_selected(army_id: int) -> void:
 
 
 func _on_vertex_selected(pos: Vector2i) -> void:
-	print("HUD: Vertex selected: (%d, %d) — empty terrain" % [pos.x, pos.y])
+	print("HUD: Vertex selected: (%d, %d)" % [pos.x, pos.y])
+	var terrain = DataManager.get_terrain_at(pos.x, pos.y)
+	var terrain_name = "空地"
+	match terrain:
+		"mountain": terrain_name = "山地"
+		"plain", "grassland": terrain_name = "平原"
+		"forest": terrain_name = "森林"
+		"water", "ocean": terrain_name = "水域"
+		"city": terrain_name = "城市用地"
+		"guandao", "road": terrain_name = "道路"
+	print("  Terrain: %s" % terrain_name)
 	_refresh_army_panel()
 
 
@@ -654,15 +712,40 @@ func _update_side_panel_city(city_id: String) -> void:
 	var city = GameManager.get_city(city_id)
 	if not city: return
 
+	var is_cmd = (city.type == "commandery")
+	var is_pass = (city.type == "pass")
+
 	side_title.text = city.name
+	if is_cmd:
+		side_title.text += " [郡]"
+	if is_pass:
+		side_title.text += " [关卡]"
 	if city.is_owned():
 		var faction = GameManager.get_faction(city.faction_id)
 		side_title.text += " [%s]" % (faction.name if faction else "?")
 
 	_add_info_line("耐久: %d / %d" % [city.durability, city.max_durability])
-	_add_info_line("金钱: %d  粮食: %d" % [city.gold, city.food])
+	if is_cmd or is_pass:
+		# 郡 — 显示所属府和能力
+		var pref = GameManager.get_city(city.prefecture_id)
+		_add_info_line("所属府: %s" % (pref.name if pref else city.prefecture_id))
+		if city.defense_bonus > 0:
+				_add_info_line("防御加成: +%d%%" % city.defense_bonus)
+	if not city.tiles.is_empty():
+		_add_info_line("规模: %d格" % city.tiles.size())
+	if not city.capabilities.is_empty():
+		var cap_names: Array = []
+		for c in city.capabilities:
+			match c:
+				"deploy_army": cap_names.append("出征")
+				"defend": cap_names.append("驻防")
+				_: cap_names.append(c)
+		_add_info_line("能力: %s" % ", ".join(cap_names))
+	else:
+		_add_info_line("金钱: %d  粮食: %d" % [city.gold, city.food])
 	_add_info_line("人口: %d  兵力: %d" % [city.get_total_population(), city.get_total_troops()])
-	_add_info_line("收入: %d金/旬  %d粮/旬" % [city.get_gold_income_per_turn(), city.get_food_income_per_turn()])
+	if not is_cmd:
+		_add_info_line("收入: %d金/旬  %d粮/旬" % [city.get_gold_income_per_turn(), city.get_food_income_per_turn()])
 	_add_separator()
 
 	# 郡列表

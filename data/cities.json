@@ -1,234 +1,865 @@
 {
-  "cities": [
-    {
-      "id": "jinyang",
-      "name": "晋阳",
-      "position": {
-        "x": 123,
-        "y": 59
-      },
-      "max_durability": 2200,
-      "counties": [
-        {
-          "id": "jinyang_01",
-          "name": "晋阳",
-          "center": {
-            "x": 123,
-            "y": 59
-          },
-          "size": "large"
-        },
-        {
-          "id": "jinyang_02",
-          "name": "晋阳郊",
-          "center": {
-            "x": 125,
-            "y": 59
-          },
-          "size": "small"
-        }
-      ]
-    },
+  "prefectures": [
     {
       "id": "beiping",
-      "name": "北平",
+      "name": "北平府",
+      "type": "prefecture",
       "position": {
         "x": 150,
         "y": 48
       },
       "max_durability": 2500,
-      "counties": [
+      "commanderies": [
         {
-          "id": "beiping_01",
+          "id": "beiping_cmd",
           "name": "北平",
+          "prefecture_id": "beiping",
           "center": {
             "x": 150,
             "y": 48
           },
-          "size": "large"
+          "size": "large",
+          "vertices": [
+            [
+              150,
+              48
+            ]
+          ]
         },
         {
-          "id": "beiping_02",
-          "name": "北平郊",
+          "id": "jizhou",
+          "name": "蓟州",
+          "prefecture_id": "beiping",
           "center": {
-            "x": 152,
-            "y": 48
+            "x": 164,
+            "y": 49
           },
-          "size": "small"
+          "size": "small",
+          "vertices": [
+            [
+              164,
+              49
+            ]
+          ],
+          "capabilities": [
+            "deploy_army"
+          ]
+        },
+        {
+          "id": "shanhai_pass",
+          "name": "山海关",
+          "type": "pass",
+          "prefecture_id": "beiping",
+          "tiles": [
+            [
+              176,
+              50
+            ],
+            [
+              177,
+              50
+            ]
+          ],
+          "size": "medium",
+          "max_durability": 5500,
+          "defense_bonus": 50,
+          "capabilities": [
+            "deploy_army",
+            "defend"
+          ]
+        },
+        {
+          "id": "gubeikou",
+          "name": "古北口",
+          "type": "pass",
+          "prefecture_id": "beiping",
+          "tiles": [
+            [
+              158,
+              39
+            ],
+            [
+              159,
+              39
+            ]
+          ],
+          "size": "medium",
+          "max_durability": 2000,
+          "defense_bonus": 45,
+          "capabilities": [
+            "deploy_army",
+            "defend"
+          ]
+        },
+        {
+          "id": "juyongguan",
+          "name": "居庸关",
+          "type": "pass",
+          "prefecture_id": "beiping",
+          "tiles": [
+            [
+              142,
+              42
+            ],
+            [
+              143,
+              42
+            ]
+          ],
+          "size": "medium",
+          "max_durability": 2600,
+          "defense_bonus": 50,
+          "capabilities": [
+            "deploy_army",
+            "defend"
+          ]
         }
       ]
     },
     {
-      "id": "shenyang",
-      "name": "沈阳",
+      "id": "liaodong",
+      "name": "辽东府",
+      "type": "prefecture",
       "position": {
-        "x": 217,
-        "y": 21
-      },
-      "max_durability": 2000,
-      "counties": [
-        {
-          "id": "shenyang_01",
-          "name": "沈阳",
-          "center": {
-            "x": 217,
-            "y": 21
-          },
-          "size": "large"
-        },
-        {
-          "id": "shenyang_02",
-          "name": "沈阳郊",
-          "center": {
-            "x": 219,
-            "y": 21
-          },
-          "size": "small"
-        }
-      ]
-    },
-    {
-      "id": "changchun",
-      "name": "长春",
-      "position": {
-        "x": 223,
-        "y": 1
-      },
-      "max_durability": 1800,
-      "counties": [
-        {
-          "id": "changchun_01",
-          "name": "长春",
-          "center": {
-            "x": 223,
-            "y": 1
-          },
-          "size": "large"
-        },
-        {
-          "id": "changchun_02",
-          "name": "长春郊",
-          "center": {
-            "x": 225,
-            "y": 1
-          },
-          "size": "small"
-        }
-      ]
-    },
-    {
-      "id": "yecheng",
-      "name": "邺城",
-      "position": {
-        "x": 139,
-        "y": 71
-      },
-      "max_durability": 2400,
-      "counties": [
-        {
-          "id": "yecheng_01",
-          "name": "邺城",
-          "center": {
-            "x": 139,
-            "y": 71
-          },
-          "size": "large"
-        },
-        {
-          "id": "yecheng_02",
-          "name": "邺城郊",
-          "center": {
-            "x": 141,
-            "y": 71
-          },
-          "size": "small"
-        }
-      ]
-    },
-    {
-      "id": "cangzhou",
-      "name": "沧州",
-      "position": {
-        "x": 155,
-        "y": 64
+        "x": 213,
+        "y": 26
       },
       "max_durability": 2200,
-      "counties": [
+      "commanderies": [
         {
-          "id": "cangzhou_01",
-          "name": "沧州",
+          "id": "liaodong_cmd",
+          "name": "辽东",
+          "prefecture_id": "liaodong",
           "center": {
-            "x": 155,
-            "y": 64
+            "x": 213,
+            "y": 26
           },
-          "size": "large"
+          "size": "large",
+          "vertices": [
+            [
+              213,
+              26
+            ]
+          ]
         },
         {
-          "id": "cangzhou_02",
-          "name": "沧州郊",
+          "id": "shenyang",
+          "name": "沈阳",
+          "prefecture_id": "liaodong",
           "center": {
-            "x": 157,
-            "y": 64
+            "x": 216,
+            "y": 15
           },
-          "size": "small"
+          "size": "large",
+          "vertices": [
+            [
+              216,
+              15
+            ]
+          ],
+          "capabilities": [
+            "deploy_army"
+          ]
+        },
+        {
+          "id": "jinzhou",
+          "name": "金州",
+          "prefecture_id": "liaodong",
+          "center": {
+            "x": 205,
+            "y": 53
+          },
+          "size": "medium",
+          "vertices": [
+            [
+              205,
+              53
+            ]
+          ],
+          "capabilities": [
+            "deploy_army"
+          ]
+        },
+        {
+          "id": "jinzhou_cmd",
+          "name": "锦州",
+          "prefecture_id": "liaodong",
+          "center": {
+            "x": 195,
+            "y": 33
+          },
+          "size": "medium",
+          "vertices": [
+            [
+              195,
+              33
+            ]
+          ],
+          "capabilities": [
+            "deploy_army"
+          ]
         }
       ]
     },
     {
-      "id": "kaifeng",
-      "name": "开封",
+      "id": "chengde",
+      "name": "承德府",
+      "type": "prefecture",
       "position": {
-        "x": 143,
-        "y": 89
+        "x": 168,
+        "y": 36
       },
-      "max_durability": 2500,
-      "counties": [
+      "max_durability": 2200,
+      "commanderies": [
         {
-          "id": "kaifeng_01",
-          "name": "开封",
+          "id": "chengde_cmd",
+          "name": "承德",
+          "prefecture_id": "chengde",
           "center": {
-            "x": 143,
-            "y": 89
+            "x": 168,
+            "y": 36
           },
-          "size": "large"
+          "size": "large",
+          "vertices": [
+            [
+              168,
+              36
+            ]
+          ]
         },
         {
-          "id": "kaifeng_02",
-          "name": "开封郊",
+          "id": "chifeng",
+          "name": "赤峰",
+          "prefecture_id": "chengde",
           "center": {
-            "x": 145,
-            "y": 89
+            "x": 179,
+            "y": 22
           },
-          "size": "small"
+          "size": "medium",
+          "vertices": [
+            [
+              179,
+              22
+            ]
+          ],
+          "capabilities": [
+            "deploy_army"
+          ]
+        },
+        {
+          "id": "chaoyang",
+          "name": "朝阳",
+          "prefecture_id": "chengde",
+          "center": {
+            "x": 188,
+            "y": 27
+          },
+          "size": "medium",
+          "vertices": [
+            [
+              188,
+              27
+            ]
+          ],
+          "capabilities": [
+            "deploy_army"
+          ]
         }
       ]
     },
     {
-      "id": "jinling",
-      "name": "金陵",
+      "id": "taiyuan",
+      "name": "太原府",
+      "type": "prefecture",
       "position": {
-        "x": 173,
-        "y": 132
+        "x": 124,
+        "y": 59
       },
       "max_durability": 2600,
-      "counties": [
+      "commanderies": [
         {
-          "id": "jinling_01",
-          "name": "金陵",
+          "id": "taiyuan_cmd",
+          "name": "太原",
+          "prefecture_id": "taiyuan",
           "center": {
-            "x": 173,
-            "y": 132
+            "x": 124,
+            "y": 59
           },
-          "size": "large"
+          "size": "large",
+          "vertices": [
+            [
+              124,
+              59
+            ]
+          ]
         },
         {
-          "id": "jinling_02",
-          "name": "金陵郊",
+          "id": "xihe",
+          "name": "西河",
+          "prefecture_id": "taiyuan",
           "center": {
-            "x": 175,
-            "y": 132
+            "x": 115,
+            "y": 60
           },
-          "size": "small"
+          "size": "medium",
+          "vertices": [
+            [
+              115,
+              60
+            ]
+          ],
+          "capabilities": [
+            "deploy_army"
+          ]
+        },
+        {
+          "id": "shangdang",
+          "name": "上党",
+          "prefecture_id": "taiyuan",
+          "center": {
+            "x": 130,
+            "y": 66
+          },
+          "size": "medium",
+          "vertices": [
+            [
+              130,
+              66
+            ]
+          ],
+          "capabilities": [
+            "deploy_army"
+          ]
+        },
+        {
+          "id": "yanmen_pass",
+          "name": "雁门关",
+          "type": "pass",
+          "prefecture_id": "taiyuan",
+          "tiles": [
+            [
+              119,
+              51
+            ],
+            [
+              120,
+              51
+            ]
+          ],
+          "size": "medium",
+          "max_durability": 2400,
+          "defense_bonus": 50,
+          "capabilities": [
+            "deploy_army",
+            "defend"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "datong",
+      "name": "大同府",
+      "type": "prefecture",
+      "position": {
+        "x": 122,
+        "y": 38
+      },
+      "max_durability": 2400,
+      "commanderies": [
+        {
+          "id": "datong_cmd",
+          "name": "大同",
+          "prefecture_id": "datong",
+          "center": {
+            "x": 122,
+            "y": 38
+          },
+          "size": "large",
+          "vertices": [
+            [
+              122,
+              38
+            ]
+          ]
+        },
+        {
+          "id": "xuanfu",
+          "name": "宣府",
+          "type": "pass",
+          "prefecture_id": "datong",
+          "tiles": [
+            [
+              133,
+              40
+            ],
+            [
+              134,
+              40
+            ]
+          ],
+          "size": "medium",
+          "max_durability": 2700,
+          "defense_bonus": 50,
+          "capabilities": [
+            "deploy_army",
+            "defend"
+          ]
+        },
+        {
+          "id": "daoma_pass",
+          "name": "倒马关",
+          "type": "pass",
+          "prefecture_id": "datong",
+          "tiles": [
+            [
+              131,
+              46
+            ],
+            [
+              132,
+              46
+            ]
+          ],
+          "size": "medium",
+          "max_durability": 2200,
+          "defense_bonus": 45,
+          "capabilities": [
+            "deploy_army",
+            "defend"
+          ]
+        },
+        {
+          "id": "shahukou",
+          "name": "杀虎口",
+          "type": "pass",
+          "prefecture_id": "datong",
+          "tiles": [
+            [
+              121,
+              34
+            ],
+            [
+              122,
+              34
+            ]
+          ],
+          "size": "medium",
+          "max_durability": 2500,
+          "defense_bonus": 50,
+          "capabilities": [
+            "deploy_army",
+            "defend"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tanhanshan",
+      "name": "弹汗山",
+      "type": "prefecture",
+      "position": {
+        "x": 140,
+        "y": 28
+      },
+      "max_durability": 2000,
+      "commanderies": [
+        {
+          "id": "tanhan_cmd",
+          "name": "弹汗山",
+          "prefecture_id": "tanhanshan",
+          "center": {
+            "x": 140,
+            "y": 28
+          },
+          "size": "large",
+          "vertices": [
+            [
+              140,
+              28
+            ]
+          ]
+        },
+        {
+          "id": "baidao",
+          "name": "白道",
+          "prefecture_id": "tanhanshan",
+          "center": {
+            "x": 132,
+            "y": 27
+          },
+          "size": "medium",
+          "vertices": [
+            [
+              132,
+              27
+            ]
+          ],
+          "capabilities": [
+            "deploy_army"
+          ]
+        },
+        {
+          "id": "raole",
+          "name": "饶乐",
+          "prefecture_id": "tanhanshan",
+          "center": {
+            "x": 148,
+            "y": 25
+          },
+          "size": "medium",
+          "vertices": [
+            [
+              148,
+              25
+            ]
+          ],
+          "capabilities": [
+            "deploy_army"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wuyuan",
+      "name": "五原府",
+      "type": "prefecture",
+      "position": {
+        "x": 100,
+        "y": 34
+      },
+      "max_durability": 2200,
+      "commanderies": [
+        {
+          "id": "wuyuan_cmd",
+          "name": "五原",
+          "prefecture_id": "wuyuan",
+          "center": {
+            "x": 100,
+            "y": 34
+          },
+          "size": "large",
+          "vertices": [
+            [
+              100,
+              34
+            ]
+          ]
+        },
+        {
+          "id": "jiuyuan",
+          "name": "九原",
+          "prefecture_id": "wuyuan",
+          "center": {
+            "x": 92,
+            "y": 31
+          },
+          "size": "medium",
+          "vertices": [
+            [
+              92,
+              31
+            ]
+          ],
+          "capabilities": [
+            "deploy_army"
+          ]
+        },
+        {
+          "id": "yunzhong",
+          "name": "云中",
+          "prefecture_id": "wuyuan",
+          "center": {
+            "x": 114,
+            "y": 31
+          },
+          "size": "medium",
+          "vertices": [
+            [
+              114,
+              31
+            ]
+          ],
+          "capabilities": [
+            "deploy_army"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "zhengding",
+      "name": "真定府",
+      "type": "prefecture",
+      "position": {
+        "x": 142,
+        "y": 59
+      },
+      "max_durability": 2400,
+      "commanderies": [
+        {
+          "id": "zhengding_cmd",
+          "name": "真定",
+          "prefecture_id": "zhengding",
+          "center": {
+            "x": 142,
+            "y": 59
+          },
+          "size": "large",
+          "vertices": [
+            [
+              142,
+              59
+            ]
+          ]
+        },
+        {
+          "id": "zhuozhou",
+          "name": "涿州",
+          "prefecture_id": "zhengding",
+          "center": {
+            "x": 147,
+            "y": 54
+          },
+          "size": "medium",
+          "vertices": [
+            [
+              147,
+              54
+            ]
+          ],
+          "capabilities": [
+            "deploy_army"
+          ]
+        },
+        {
+          "id": "yizhou_hb",
+          "name": "易州",
+          "prefecture_id": "zhengding",
+          "center": {
+            "x": 135,
+            "y": 57
+          },
+          "size": "medium",
+          "vertices": [
+            [
+              135,
+              57
+            ]
+          ],
+          "capabilities": [
+            "deploy_army"
+          ]
+        },
+        {
+          "id": "dingzhou",
+          "name": "定州",
+          "prefecture_id": "zhengding",
+          "center": {
+            "x": 139,
+            "y": 64
+          },
+          "size": "medium",
+          "vertices": [
+            [
+              139,
+              64
+            ]
+          ],
+          "capabilities": [
+            "deploy_army"
+          ]
+        },
+        {
+          "id": "jingxing",
+          "name": "井陉",
+          "type": "pass",
+          "prefecture_id": "zhengding",
+          "tiles": [
+            [
+              133,
+              61
+            ],
+            [
+              134,
+              61
+            ]
+          ],
+          "size": "medium",
+          "max_durability": 2200,
+          "defense_bonus": 45,
+          "capabilities": [
+            "deploy_army",
+            "defend"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hejian",
+      "name": "河间府",
+      "type": "prefecture",
+      "position": {
+        "x": 152,
+        "y": 67
+      },
+      "max_durability": 2200,
+      "commanderies": [
+        {
+          "id": "hejian_cmd",
+          "name": "河间",
+          "prefecture_id": "hejian",
+          "center": {
+            "x": 152,
+            "y": 67
+          },
+          "size": "large",
+          "vertices": [
+            [
+              152,
+              67
+            ]
+          ]
+        },
+        {
+          "id": "cangzhou_hb",
+          "name": "沧州",
+          "prefecture_id": "hejian",
+          "center": {
+            "x": 159,
+            "y": 64
+          },
+          "size": "medium",
+          "vertices": [
+            [
+              159,
+              64
+            ]
+          ],
+          "capabilities": [
+            "deploy_army"
+          ]
+        },
+        {
+          "id": "tianjin",
+          "name": "天津卫",
+          "prefecture_id": "hejian",
+          "center": {
+            "x": 161,
+            "y": 57
+          },
+          "size": "medium",
+          "vertices": [
+            [
+              161,
+              57
+            ]
+          ],
+          "capabilities": [
+            "deploy_army"
+          ]
+        },
+        {
+          "id": "jingzhou_hb",
+          "name": "景州",
+          "prefecture_id": "hejian",
+          "center": {
+            "x": 150,
+            "y": 73
+          },
+          "size": "medium",
+          "vertices": [
+            [
+              150,
+              73
+            ]
+          ],
+          "capabilities": [
+            "deploy_army"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "yecheng_hb",
+      "name": "邺城府",
+      "type": "prefecture",
+      "position": {
+        "x": 138,
+        "y": 76
+      },
+      "max_durability": 2200,
+      "commanderies": [
+        {
+          "id": "yecheng_cmd",
+          "name": "邺城",
+          "prefecture_id": "yecheng_hb",
+          "center": {
+            "x": 138,
+            "y": 76
+          },
+          "size": "large",
+          "vertices": [
+            [
+              138,
+              76
+            ]
+          ]
+        },
+        {
+          "id": "guangping",
+          "name": "广平",
+          "prefecture_id": "yecheng_hb",
+          "center": {
+            "x": 142,
+            "y": 82
+          },
+          "size": "medium",
+          "vertices": [
+            [
+              142,
+              82
+            ]
+          ],
+          "capabilities": [
+            "deploy_army"
+          ]
+        },
+        {
+          "id": "daming",
+          "name": "大名",
+          "prefecture_id": "yecheng_hb",
+          "center": {
+            "x": 148,
+            "y": 79
+          },
+          "size": "medium",
+          "vertices": [
+            [
+              148,
+              79
+            ]
+          ],
+          "capabilities": [
+            "deploy_army"
+          ]
+        },
+        {
+          "id": "quzhou",
+          "name": "曲周",
+          "prefecture_id": "yecheng_hb",
+          "center": {
+            "x": 134,
+            "y": 79
+          },
+          "size": "medium",
+          "vertices": [
+            [
+              134,
+              79
+            ]
+          ],
+          "capabilities": [
+            "deploy_army"
+          ]
         }
       ]
     }

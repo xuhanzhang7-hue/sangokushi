@@ -4,7 +4,8 @@ extends Node
 
 # 原始数据缓存
 var _officers_raw: Array = []
-var _cities_raw: Array = []
+var _cities_raw: Array = []       # 兼容旧格式 — 府/城列表
+var _commanderies_raw: Array = [] # 所有郡的独立列表
 var _skills_raw: Dictionary = {}
 var _units_raw: Dictionary = {}
 var _techs_raw: Dictionary = {}
@@ -23,8 +24,9 @@ var _resources_data: Array = []
 
 # 快速索引
 var officers_by_id: Dictionary = {}
-var cities_by_id: Dictionary = {}
-var counties_by_id: Dictionary = {}
+var cities_by_id: Dictionary = {}       # 府 + 郡（按 tile 快速查找用）
+var counties_by_id: Dictionary = {}     # 郡
+var commanderies_by_id: Dictionary = {} # 郡（含 capabilities）
 var passes_by_id: Dictionary = {}
 var harbors_by_id: Dictionary = {}
 
@@ -66,15 +68,61 @@ func _load_cities() -> void:
 	if file:
 		var json = JSON.parse_string(file.get_as_text())
 		file.close()
-		if json and "cities" in json:
-			_cities_raw = json["cities"]
-			for c in _cities_raw:
-				cities_by_id[c["id"]] = c
-				if "counties" in c:
-					for county in c["counties"]:
-						county["city_id"] = c["id"]
-						counties_by_id[county["id"]] = county
-			print("DataManager: Loaded %d cities with counties" % _cities_raw.size())
+		if json:
+			# 新格式: "prefectures" → 府-郡 二级结构
+			if "prefectures" in json:
+				for pref in json["prefectures"]:
+					# 府本身作为一个 city 条目
+					var city_entry = {
+						"id": pref["id"],
+						"name": pref["name"],
+						"type": "prefecture",
+						"position": pref.get("position", {}),
+						"max_durability": pref.get("max_durability", 2000),
+						"counties": []  # 将由 commanderies 填充
+					}
+					# 处理郡
+					if "commanderies" in pref:
+						for cmd in pref["commanderies"]:
+							# Determine center — passes use first tile as center
+							var cmd_center = cmd.get("center", {})
+							var cmd_tiles = cmd.get("tiles", [])
+							if cmd_center.is_empty() and not cmd_tiles.is_empty():
+								cmd_center = {"x": cmd_tiles[0][0], "y": cmd_tiles[0][1]}
+							elif cmd_center.is_empty():
+								cmd_center = cmd.get("position", pref["position"])
+							var county_entry = {
+								"id": cmd["id"],
+								"name": cmd["name"],
+								"city_id": pref["id"],
+								"prefecture_id": pref["id"],
+								"type": cmd.get("type", "commandery"),
+								"center": cmd_center,
+								"tiles": cmd_tiles,
+								"size": cmd.get("size", "medium"),
+								"vertices": cmd.get("vertices", cmd_tiles),
+								"capabilities": cmd.get("capabilities", []),
+								"max_durability": cmd.get("max_durability", 800),
+								"defense_bonus": cmd.get("defense_bonus", 0),
+							}
+							city_entry["counties"].append(county_entry)
+							counties_by_id[cmd["id"]] = county_entry
+							commanderies_by_id[cmd["id"]] = county_entry
+							# 每个郡也作为独立实体存储，用于地图交互
+							_commanderies_raw.append(county_entry)
+					_cities_raw.append(city_entry)
+					cities_by_id[pref["id"]] = city_entry
+				print("DataManager: Loaded %d prefectures with %d commanderies" % [_cities_raw.size(), _commanderies_raw.size()])
+			# 旧格式: "cities" → 向后兼容
+			elif "cities" in json:
+				_cities_raw = json["cities"]
+				for c in _cities_raw:
+					cities_by_id[c["id"]] = c
+					if "counties" in c:
+						for county in c["counties"]:
+							county["city_id"] = c["id"]
+							counties_by_id[county["id"]] = county
+				print("DataManager: Loaded %d cities (legacy format)" % _cities_raw.size())
 	else:
 		push_error("DataManager: Failed to load cities.json")
 
@@ -296,6 +344,22 @@ func get_available_units(_faction_id: String, _city_id: String, county_ids: Arra
 
 func get_all_cities() -> Array:
 	return _cities_raw
+
+
+func get_all_commanderies() -> Array:
+	return _commanderies_raw
+
+
+func get_commandery_data(cmd_id: String) -> Dictionary:
+	return commanderies_by_id.get(cmd_id, {})
+
+
+func get_commandery_at(gx: int, gy: int) -> Dictionary:
+	for cmd in _commanderies_raw:
+		var c = cmd.get("center", {})
+		if c.get("x", -1) == gx and c.get("y", -1) == gy:
+			return cmd
+	return {}
 
 
 func get_tech_tree(tech_id: String) -> Dictionary:

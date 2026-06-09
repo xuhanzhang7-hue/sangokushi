@@ -3,10 +3,12 @@ class_name County extends RefCounted
 
 var id: String
 var city_id: String
+var prefecture_id: String = ""   # 所属府ID
 var governor_id: int = -1       # 知郡事武将ID，-1=无
 var center: Vector2i             # 郡中心顶点
 var size: String = "medium"      # small/medium/large
 var vertices: Array = []  # 该郡包含的顶点列表
+var capabilities: Array = []  # 郡的能力 ["deploy_army"]
 
 # 开发度 0-1000
 var dev_agriculture: int = 200
@@ -30,7 +32,8 @@ var special_resource: String = ""  # gold_mine, iron_mine, farmland, or empty
 
 func from_dict(d: Dictionary) -> void:
 	id = d.get("id", "")
-	city_id = d.get("city_id", "")
+	city_id = d.get("city_id", d.get("prefecture_id", ""))
+	prefecture_id = d.get("prefecture_id", d.get("city_id", ""))
 	governor_id = d.get("governor_id", -1)
 	size = d.get("size", "medium")
 	dev_agriculture = d.get("dev_agriculture", 200)
@@ -41,6 +44,7 @@ func from_dict(d: Dictionary) -> void:
 	facilities = d.get("facilities", [])
 	troops = d.get("troops", 0)
 	special_resource = d.get("special_resource", "")
+	capabilities = d.get("capabilities", [])
 
 	# 解析 center
 	var c = d.get("center", {})
@@ -60,6 +64,10 @@ func can_build_facility() -> bool:
 
 func has_governor() -> bool:
 	return governor_id > 0
+
+
+func can_deploy_army() -> bool:
+	return "deploy_army" in capabilities
 
 
 func get_development_total() -> int:
